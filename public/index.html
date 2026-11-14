@@ -1,0 +1,1150 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#1C2433">
+<title>수업 관리</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{--ink:#1C2433;--ink2:#4A5263;--mute:#7C8494;--line:#E3DFD5;--paper:#F6F4EF;--card:#fff;--go:#1F7A5C;--go-bg:#E3F2EC;--warn:#B45309;--warn-bg:#FDF1DF;--bad:#B42318;--bad-bg:#FDECEA;--sel:#1C2433}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Pretendard,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:15px;line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+.top{position:sticky;top:0;z-index:20;background:var(--ink);color:#F3F1EA;padding-top:env(safe-area-inset-top)}
+.top .in{max-width:1000px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:10px}
+.top b{font-size:16px;letter-spacing:-.02em;white-space:nowrap}
+.top .who{margin-left:auto;font-size:13px;color:#B9BFCA;white-space:nowrap}
+.top button{background:none;border:1px solid #3A4458;color:#D7DBE3;border-radius:8px;padding:5px 9px;font-size:13px;cursor:pointer}
+.tabs{max-width:1000px;margin:0 auto;padding:0 12px 10px;display:flex;gap:4px;overflow-x:auto}
+.tabs button{border:0;background:none;color:#9AA2B1;font-weight:600;padding:7px 12px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.tabs button.on{background:#F3F1EA;color:var(--ink)}
+main{max-width:1000px;margin:0 auto;padding:14px 16px 120px}
+.datebar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.datebar .d{font-size:20px;font-weight:700;letter-spacing:-.02em}
+.datebar input[type=date]{border:1.5px solid var(--line);border-radius:10px;padding:6px 8px;background:#fff}
+.ib{border:1.5px solid var(--line);background:#fff;border-radius:10px;width:36px;height:36px;cursor:pointer;font-size:16px}
+.btn{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;font-weight:600;cursor:pointer;white-space:nowrap}
+.btn.dark{background:var(--ink);border-color:var(--ink);color:#fff}
+.btn.go{background:var(--go);border-color:var(--go);color:#fff}
+.btn.red{color:var(--bad);border-color:#F2C6C1}
+.btn.sm{padding:5px 9px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:default}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;margin-bottom:12px}
+.card>.hd{display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap;padding:14px 16px;cursor:pointer}
+.card>.hd h3{margin:0;font-size:17px;letter-spacing:-.02em}
+.card>.bd{padding:0 16px 16px;display:none}
+.card.open>.bd{display:block}
+.tag{font-size:12px;font-weight:600;border-radius:999px;padding:2px 8px;background:#EEEBE3;color:var(--ink2);white-space:nowrap}
+.tag.go{background:var(--go-bg);color:var(--go)}.tag.strong{font-size:13px;padding:3px 10px}.tag.bad.strong{background:var(--bad);color:#fff}.tag.warn{background:var(--warn-bg);color:var(--warn)}.tag.bad{background:var(--bad-bg);color:var(--bad)}
+.sp{flex:1}
+.lesson{background:#FAF9F5;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px}
+.lesson .row{display:grid;grid-template-columns:72px minmax(0,1fr);gap:8px;align-items:start;margin-bottom:8px}
+.lesson .row label{font-size:13px;color:var(--mute);padding-top:7px;font-weight:600}
+.lesson input,.lesson textarea,.f input,.f select,.f textarea,.note input{width:100%;border:1.5px solid var(--line);border-radius:9px;padding:7px 9px;background:#fff;outline:none}
+.lesson textarea{resize:vertical;min-height:38px}
+input:focus,textarea:focus,select:focus{border-color:var(--ink)!important}
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+.seg button{border:0;background:none;padding:7px 10px;font-weight:600;font-size:14px;cursor:pointer;color:var(--ink2);white-space:nowrap}
+.seg button+button{border-left:1.5px solid var(--line)}
+.seg.mini{flex-shrink:0}
+.mopt{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:-2px 0 6px;font-size:13px}
+.mopt label{display:flex;align-items:center;gap:5px;font-weight:600;cursor:pointer}
+.mopt input{width:16px;height:16px;accent-color:var(--ink)}
+.mopt small{color:var(--mute)}
+.seg.mini button{padding:3px 8px;font-size:12px}
+.seg button.on{background:var(--sel);color:#fff}
+.seg.att button.on[data-v=late]{background:var(--warn)}.seg.att button.on[data-v=out]{background:var(--bad)}
+.seg.hw button.on[data-v=done]{background:var(--go)}.seg.hw button.on[data-v=part]{background:var(--warn)}.seg.hw button.on[data-v=none]{background:var(--bad)}
+.ctrl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.prevhw{font-size:13px;color:var(--ink2);background:#fff;border:1px dashed var(--line);border-radius:9px;padding:6px 9px;margin:4px 0 10px}
+.stu{border-top:1px solid var(--line);padding:12px 0}
+.rot{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:12px;color:var(--mute);margin-bottom:10px}
+.rot span{border:1px solid var(--line);border-radius:999px;padding:2px 8px;background:#fff;font-weight:600}
+.rot span.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.rot i{font-style:normal}
+.thumbs{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
+.thumbs:empty{display:none}
+.th{position:relative;width:72px;height:72px;border-radius:10px;overflow:hidden;background:#000;display:inline-block}
+.th img,.th video{width:100%;height:100%;object-fit:cover;display:block}
+.th b{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:20px;pointer-events:none}
+.th button{position:absolute;top:2px;right:2px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:15px;line-height:1;cursor:pointer}
+.hwp{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.hwp button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:4px 10px;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer}
+.hwp button.on{background:var(--go-bg);border-color:var(--go);color:var(--go)}
+.stu .nm{font-weight:700;font-size:16px;display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.stu .line{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.stu .line small{color:var(--mute);font-size:12px;min-width:48px}
+.note{margin-top:8px}
+.mini{font-size:13px;color:var(--ink2);margin:0 0 8px}
+.quick{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 2px}
+.savebar{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom));margin-top:12px;display:flex;gap:8px;justify-content:flex-end}
+.savebar .btn{box-shadow:0 4px 14px rgba(28,36,51,.15)}
+.empty{color:var(--mute);text-align:center;padding:40px 12px}
+.msg{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px}
+.msg .h{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.msg textarea{width:100%;min-height:80px;overflow:hidden;border:1.5px solid var(--line);border-radius:10px;padding:9px;resize:vertical;line-height:1.5;background:#FCFBF8}
+.msg.sent textarea{background:#F3F6F4;color:var(--ink2)}
+.msg input[type=checkbox]{width:20px;height:20px;accent-color:var(--ink)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.info{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:14px;color:var(--ink2)}
+.info.warn{background:var(--warn-bg);border-color:#F2D6AE;color:#7A3E04}
+.info.ok{background:var(--go-bg);border-color:#BFE0D2;color:#165C45}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--mute);font-weight:600;white-space:nowrap}
+td{word-break:keep-all}td b{white-space:nowrap}
+.sec{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+.sec h3{margin:0 0 4px;font-size:17px}.sec .sub{margin:0 0 12px;color:var(--mute);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.f label{display:block;font-size:13px;font-weight:600;margin-bottom:4px;color:var(--ink2)}
+.f small{display:block;color:var(--mute);font-size:12px;margin-top:3px}
+.days{display:flex;gap:4px;flex-wrap:wrap}
+.days label{display:inline-flex}.days input{display:none}
+.days span{border:1.5px solid var(--line);border-radius:8px;padding:5px 9px;cursor:pointer;font-weight:600;background:#fff}
+.days input:checked+span{background:var(--ink);color:#fff;border-color:var(--ink)}
+.modal{position:fixed;inset:0;background:rgba(20,24,33,.45);display:none;align-items:flex-end;justify-content:center;z-index:50}
+.modal.on{display:flex}
+.modal .box{background:#fff;width:100%;max-width:640px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
+.modal h3{margin:0 0 12px}
+@media (min-width:700px){.modal{align-items:center}.modal .box{border-radius:18px}}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:12px;padding:10px 16px;font-size:14px;z-index:60;display:none;max-width:90vw}
+.login{max-width:420px;margin:10vh auto;padding:0 16px}
+.login .box{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px 20px}
+.people{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.people button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:7px 13px;font-weight:600;cursor:pointer}
+.people button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.login input{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px;margin-top:8px;outline:none}
+.err{color:var(--bad);font-size:14px;margin:8px 0 0;min-height:1em}
+.paste{width:100%;min-height:140px;border:1.5px solid var(--line);border-radius:10px;padding:9px;font-family:ui-monospace,Menlo,monospace;font-size:13px}
+@media (max-width:640px){.grid{grid-template-columns:minmax(0,1fr)}.lesson .row{grid-template-columns:minmax(0,1fr)}.lesson .row label{padding-top:0}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="modal" id="modal"><div class="box" id="mbox"></div></div>
+<div class="toast" id="toast"></div>
+<script>
+"use strict";
+const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const TK = "cm.token";
+let token = null; try { token = localStorage.getItem(TK); } catch {}
+const S = { me: null, tab: "day", date: null, today: null, setup: null, day: null, kind: "daily" };
+const DOW = "일월화수목금토";
+const ATT = [["in", "출석"], ["late", "지각"], ["out", "결석"]];
+const HW = [["done", "완료"], ["part", "미흡"], ["none", "미제출"]];
+const PHR = [["greet", "{인사} 첫인사"], ["close", "{마무리} 끝인사"], ["done", "{숙제 멘트} 숙제 완료일 때"], ["part", "{숙제 멘트} 숙제 미흡일 때"], ["none", "{숙제 멘트} 숙제 미제출일 때"], ["late", "{출석 멘트} 지각일 때"], ["out", "{출석 멘트} 결석일 때"], ["weekGood", "{주간 멘트} 숙제 80% 이상"], ["weekMid", "{주간 멘트} 숙제 50~79%"], ["weekLow", "{주간 멘트} 숙제 50% 미만"]];
+const courses = () => (S.settings && S.settings.courses) || [];
+// a curriculum <select> grouped by 과정; onlyCourse limits the list
+function curOptions(list, val, empty, onlyCourse) {
+  // a 진도표 without 과정 is shared by every 과정, so it always stays in the list
+  const groups = [...courses(), ""].map((co) => [co, list.filter((x) => (x.course || "") === co && (!onlyCourse || !x.course || x.course === onlyCourse))]).filter(([, l]) => l.length);
+  const extra = list.filter((x) => x.course && !courses().includes(x.course) && (!onlyCourse || x.course === onlyCourse));
+  if (extra.length) groups.push(["기타", extra]);
+  return `<option value="">${esc(empty)}</option>` + groups.map(([co, l]) => `<optgroup label="${esc(co || "모든 과정 공통")}">${l.map((x) => `<option value="${x.id}" ${x.id === val ? "selected" : ""}>${esc(x.name)}</option>`).join("")}</optgroup>`).join("");
+}
+const ATA = [["daily", "일간 리포트"], ["missing", "미제출 알림"], ["warn", "누적 알림"], ["weekly", "주간 리포트"], ["monthly", "월간 리포트"], ["att_in", "등원 알림"], ["att_late", "지각 알림"], ["att_out", "결석·미도착 알림"]];
+// #{변수} names the app can fill (same list as the server, plus common aliases)
+const ATA_KNOWN = ["학원", "학생명", "반", "날짜", "출석", "오늘할일", "숙제", "다음수업", "지난숙제내용", "지난숙제결과", "선생님한마디", "인사", "마무리", "출석멘트", "숙제멘트", "주간멘트", "기간", "출석요약", "숙제완료율", "진도", "코멘트", "누적횟수", "누적날짜", "수업시간", "현재시각",
+  "이름", "학생", "학생이름", "원생명", "자녀명", "학원명", "학원이름", "수업내용", "오늘수업", "배운내용", "진도내용", "오늘배운내용", "과제", "오늘숙제", "다음수업내용", "숙제결과", "숙제확인", "한마디", "선생님코멘트", "출결", "출석여부", "일자", "수업일", "시간", "도착시간", "반이름", "클래스", "횟수", "미제출횟수", "사진링크", "사진주소", "사진", "사진보기", "링크", "사진url", "학습내용", "수업진도", "오늘진도", "오늘의수업진도", "학습", "오늘학습내용", "수업활동", "전달사항", "선생님전달사항", "특이사항", "숙제안내", "숙제내용", "사진코드"];
+function ataCheck(body) {
+  const names = [...String(body || "").matchAll(/#\{([^{}]+)\}/g)].map((m) => m[1]);
+  if (!names.length) return "";
+  const bad = names.filter((n) => !ATA_KNOWN.includes(n.replace(/\s/g, "")));
+  return bad.length ? `<span style="color:var(--bad)">채울 수 없는 칸: ${bad.map((b) => "#{" + esc(b) + "}").join(" ")} → "-"로 들어가요</span>` : `<span style="color:var(--go)">칸 ${names.length}개 모두 자동으로 채워져요 ✓</span>`;
+}
+// Suggested 알림톡 template text to submit for Kakao review. 쿠션멘트형 = 기본형 + #{인사} … #{마무리}.
+const ATA_SUG = {
+  daily: "#{학원}입니다.\n#{학생명} 학생의 오늘(#{날짜}) 수업 안내드립니다.\n\n■ 출석: #{출석}\n■ 오늘 수업: #{오늘할일}\n■ 숙제: #{숙제}\n■ 다음 수업: #{다음수업}\n■ 지난 숙제: #{지난숙제결과}\n■ 선생님 한마디: #{선생님한마디}\n■ 수업 사진: #{사진주소}",
+  missing: "#{학원}입니다.\n#{학생명} 학생의 숙제 안내드립니다.\n\n■ 날짜: #{날짜}\n■ 숙제 확인: #{지난숙제결과}\n■ 숙제 내용: #{지난숙제내용}\n\n가정에서 한 번 확인 부탁드립니다.",
+  warn: "#{학원}입니다.\n#{학생명} 학생의 숙제가 #{누적횟수}회 제출되지 않아 안내드립니다.\n\n■ 미제출 날짜: #{누적날짜}\n\n가정에서 숙제 확인 부탁드립니다.",
+  weekly: "#{학원}입니다.\n#{학생명} 학생의 주간 리포트(#{기간})입니다.\n\n■ 출석: #{출석요약}\n■ 숙제 완료율: #{숙제완료율}\n■ 진도: #{진도}\n■ 선생님 코멘트: #{코멘트}",
+  monthly: "#{학원}입니다.\n#{학생명} 학생의 월간 리포트(#{기간})입니다.\n\n■ 출석: #{출석요약}\n■ 숙제 완료율: #{숙제완료율}\n■ 진도: #{진도}\n■ 선생님 코멘트: #{코멘트}",
+  att_in: "#{학원}입니다.\n#{학생명} 학생이 #{현재시각}에 등원했습니다.",
+  att_late: "#{학원}입니다.\n#{학생명} 학생이 #{현재시각}에 등원했습니다. (수업 시간 #{수업시간})",
+  att_out: "#{학원}입니다.\n#{학생명} 학생이 #{수업시간} 수업에 아직 도착하지 않았습니다.\n확인 부탁드립니다.",
+};
+function ataSuggest(k, st) {
+  const b = ATA_SUG[k] || "";
+  if (st !== "cushion") return b;
+  const [first, ...rest] = b.split("\n"), extra = k === "daily" ? "\n#{숙제멘트}" : k === "weekly" || k === "monthly" ? "\n#{주간멘트}" : "";
+  return `${first}\n#{인사}\n${rest.join("\n")}${extra}\n\n#{마무리}`;
+}
+const KIND = { daily: "일간", missing: "미제출 알림", warn: "누적 알림", weekly: "주간", monthly: "월간" };
+const ST = { draft: ["대기", ""], sent: ["✓ 전송됨", "go"], failed: ["✕ 실패", "bad"] };
+// 오늘 수업 화면의 학생 이름 옆: 학부모 리포트 상태
+const hm = (t) => (t ? new Date(t).toTimeString().slice(0, 5) : "");
+function dailyTag(d) {
+  if (!d) return "";
+  if (d.status === "sent") return `<span class="tag go strong">✓ 학부모 전송됨 ${hm(d.at)}</span>`;
+  if (d.status === "failed") return `<span class="tag bad strong" title="${esc(d.err || "")}">✕ 전송 실패</span>`;
+  if (d.hold) return `<span class="tag warn">${esc(d.hold)} · 따로 보내기</span>`;
+  return d.checked ? '<span class="tag">리포트 대기</span>' : '<span class="tag">보내지 않음</span>';
+}
+
+function toast(m) { const t = $("#toast"); t.textContent = m; t.style.display = "block"; clearTimeout(t._h); t._h = setTimeout(() => (t.style.display = "none"), 2600); }
+async function api(path, body, method) {
+  const r = await fetch(path, { method: method || (body ? "POST" : "GET"), headers: { "content-type": "application/json", ...(token ? { authorization: "Bearer " + token } : {}) }, body: body ? JSON.stringify(body) : undefined });
+  const d = await r.json().catch(() => ({}));
+  if (r.status === 401 && !path.startsWith("/api/auth/")) { logout(); throw new Error("다시 로그인해 주세요."); }
+  if (!r.ok) throw new Error(d.error || "요청을 처리하지 못했어요.");
+  return d;
+}
+function logout() { token = null; try { localStorage.removeItem(TK); } catch {} S.me = null; boot(); }
+const dlabel = (d) => `${+d.slice(5, 7)}월 ${+d.slice(8)}일 (${DOW[new Date(d + "T00:00:00Z").getUTCDay()]})`;
+const addDays = (d, n) => new Date(Date.parse(d + "T00:00:00Z") + n * 864e5).toISOString().slice(0, 10);
+const bytes = (t) => [...t].reduce((n, c) => n + (c.charCodeAt(0) < 128 ? 1 : 2), 0);
+function modal(html) { $("#mbox").innerHTML = html; $("#modal").classList.add("on"); }
+function closeModal() { $("#modal").classList.remove("on"); }
+$("#modal").addEventListener("click", (e) => { if (e.target.id === "modal") closeModal(); });
+
+/* ---------------- login ---------------- */
+async function boot() {
+  if (token) {
+    try { const d = await api("/api/me"); S.me = d.me; S.today = d.today; S.date = S.date || d.today; S.sms = d.sms; S.settings = d.settings; return shell(); } catch {}
+  }
+  const st = await api("/api/auth/state").catch(() => ({ setup: false, people: [] }));
+  let who = "director";
+  const setupMode = !st.setup;
+  $("#app").innerHTML = `<div class="login"><div class="box">
+    <h2 style="margin:0 0 4px;font-size:22px">수업 관리</h2>
+    <p style="margin:0;color:var(--mute);font-size:14px">${setupMode ? "처음이에요. 학원 이름과 원장 비밀번호(6자 이상)를 정해 주세요." : "누구신지 고르고 비밀번호를 입력해 주세요."}</p>
+    ${setupMode ? "" : `<div class="people">${st.people.map((p) => `<button data-who="${esc(p.id)}" class="${p.id === who ? "on" : ""}">${esc(p.name)}${p.room ? ` · ${esc(p.room)}` : ""}</button>`).join("")}</div>`}
+    <form id="lf">${setupMode ? '<input id="acad" placeholder="학원 이름 (예: 해피영어학원)" autocomplete="organization">' : ""}<input type="password" id="pw" placeholder="비밀번호" autocomplete="${setupMode ? "new-password" : "current-password"}">
+    ${setupMode ? '<input type="password" id="pw2" placeholder="비밀번호 한 번 더" autocomplete="new-password">' : ""}
+    <button class="btn dark" style="width:100%;margin-top:12px;padding:12px">${setupMode ? "만들고 시작하기" : "들어가기"}</button><p class="err" id="lerr"></p></form></div></div>`;
+  $$(".people button").forEach((b) => (b.onclick = () => { who = b.dataset.who; $$(".people button").forEach((x) => x.classList.toggle("on", x === b)); $("#pw").focus(); }));
+  $("#lf").onsubmit = async (e) => {
+    e.preventDefault(); $("#lerr").textContent = "";
+    try {
+      if (setupMode && $("#pw").value !== $("#pw2").value) throw new Error("두 비밀번호가 서로 달라요.");
+      const d = await api(setupMode ? "/api/auth/setup" : "/api/auth/login", { who, password: $("#pw").value, academy: setupMode ? $("#acad").value : undefined });
+      token = d.token; try { localStorage.setItem(TK, token); } catch {}
+      boot();
+    } catch (err) { $("#lerr").textContent = err.message; }
+  };
+}
+
+/* ---------------- shell ---------------- */
+const APP_VER = "v11.10 보낸메시지";
+function shell() {
+  const tabs = [["day", "오늘 수업"], ["msgs", "학부모 메시지"], ["sent", "보낸 메시지"], ["missing", "미제출"], ["manage", S.me.role === "director" ? "관리" : "내 반"]];
+  $("#app").innerHTML = `<div class="top"><div class="in"><b>${esc(S.settings.academy)} 수업 관리</b><span class="who" style="opacity:.55;font-size:11px" title="앱 버전">${APP_VER}</span><span class="who">${esc(S.me.name)}</span><button id="lo">로그아웃</button></div>
+    <div class="tabs">${tabs.map(([k, v]) => `<button data-tab="${k}" class="${S.tab === k ? "on" : ""}">${v}</button>`).join("")}</div></div><main id="main"></main>`;
+  $("#lo").onclick = async () => { await flushSaves(); logout(); };
+  $$(".tabs button").forEach((b) => (b.onclick = () => { S.tab = b.dataset.tab; $$(".tabs button").forEach((x) => x.classList.toggle("on", x === b)); render(); }));
+  render();
+}
+// leaving 오늘 수업 (other tab, other date) first finishes any pending auto-save, so nothing typed is lost
+async function render() { await flushSaves(); ({ day: renderDay, msgs: renderMsgs, missing: renderMissing, manage: renderManage, sent: renderSent })[S.tab](); }
+function dateBar(extra = "") {
+  return `<div class="datebar"><button class="ib" data-dd="-1" aria-label="전날">‹</button><span class="d">${dlabel(S.date)}</span><button class="ib" data-dd="1" aria-label="다음날">›</button>
+    <input type="date" id="dpick" value="${S.date}">${S.date !== S.today ? `<button class="btn sm" id="dtoday">오늘로</button>` : ""}<span class="sp"></span>${extra}</div>`;
+}
+function bindDate() {
+  $$("[data-dd]").forEach((b) => (b.onclick = () => { S.date = addDays(S.date, +b.dataset.dd); render(); }));
+  $("#dpick").onchange = (e) => { if (e.target.value) { S.date = e.target.value; render(); } };
+  const t = $("#dtoday"); if (t) t.onclick = () => { S.date = S.today; render(); };
+}
+
+/* ---------------- 오늘 수업 ---------------- */
+let dirty = new Set();
+/* ----- 자동 저장: 입력 2초 뒤 서버에 저장 + 이 기기에 임시 보관 (탭 이동·새로고침·인터넷 끊김에도 안 사라지게) ----- */
+const pending = new Map();
+async function flushSaves() { const fns = [...pending.values()]; pending.clear(); for (const f of fns) { try { await f(); } catch {} } }
+window.addEventListener("pagehide", () => { flushSaves(); });
+// 저장 전에 창을 닫거나 새로고침하면 한 번 물어봐요 (그 사이 저장도 시작)
+window.addEventListener("beforeunload", (e) => { if (pending.size) { flushSaves(); e.preventDefault(); e.returnValue = ""; } });
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flushSaves(); });
+const draftKey = (date, cid) => `cm-draft:${date}:${cid}`;
+function gather(el) {
+  const units = $$(".lesson", el).map((b) => ({
+    unit: b.dataset.unit, cur: b.dataset.curid || null, seq: $("[data-f=seq]", b) ? +$("[data-f=seq]", b).value : null,
+    adv: $(".seg.adv .on", b) ? $(".seg.adv .on", b).dataset.v === "1" : true,
+    today: $("[data-f=today]", b).value, next: $("[data-f=next]", b).value, hw: $("[data-f=hw]", b).value,
+    nextpick: ($("[data-f=nextpick]", b) || {}).value || "", key: b.dataset.key,
+    ...(() => { const v = ($("[data-f=nextpick]", b) || {}).value || ""; const [nc, ns] = v.split("|"); return { ncur: nc || null, nseq: ns ? +ns : null }; })(),
+  }));
+  const students = $$(".stu", el).map((s) => ({ id: s.dataset.sid, att: ($(".seg.att .on", s) || {}).dataset?.v || "", hwprev: ($(".seg.hw .on", s) || {}).dataset?.v || "", note: $("[data-f=note]", s).value, hold: (($(".seg.hold .on", s) || {}).dataset?.v || "") || (($(".seg.att .on", s) || {}).dataset?.v === "out" ? "auto" : "") }));
+  return { units, students };
+}
+function saveDraft(date, cid, el) { try { localStorage.setItem(draftKey(date, cid), JSON.stringify({ at: Date.now(), ...gather(el) })); } catch {} }
+function dropDraft(date, cid) { try { localStorage.removeItem(draftKey(date, cid)); } catch {} }
+function readDraft(date, cid) { try { return JSON.parse(localStorage.getItem(draftKey(date, cid)) || "null"); } catch { return null; } }
+// put an unsaved draft back on screen
+function applyDraft(el, d) {
+  for (const u of d.units || []) {
+    const b = $(`.lesson[data-key="${u.key}"]`, el); if (!b) continue;
+    const seq = $("[data-f=seq]", b); if (seq && u.seq != null && [...seq.options].some((o) => +o.value === u.seq)) seq.value = String(u.seq);
+    for (const f of ["today", "next", "hw"]) { const t = $(`[data-f=${f}]`, b); if (t && u[f] != null) t.value = u[f]; }
+    const np = $("[data-f=nextpick]", b); if (np && [...np.options].some((o) => o.value === u.nextpick)) np.value = u.nextpick;
+    $$(".seg.adv button", b).forEach((x) => x.classList.toggle("on", (x.dataset.v === "1") === !!u.adv));
+    $$("[data-hwp]", b).forEach((x) => x.classList.toggle("on", hwHas(u.hw || "", x.dataset.hwp)));
+  }
+  for (const st of d.students || []) {
+    const r = $(`.stu[data-sid="${st.id}"]`, el); if (!r) continue;
+    if (st.hwprev) $$(".seg.hw button", r).forEach((x) => x.classList.toggle("on", x.dataset.v === st.hwprev));
+    if (st.note) { $("[data-f=note]", r).value = st.note; $(".note", r).hidden = false; }
+    if (st.hold !== undefined) setHold(r, st.hold === "auto" ? "" : st.hold);
+  }
+}
+async function renderDay() {
+  const m = $("#main");
+  m.innerHTML = dateBar(`<label style="font-size:13px;color:var(--mute);display:flex;gap:5px;align-items:center"><input type="checkbox" id="allc" ${S.allClasses ? "checked" : ""}> 요일 상관없이 모든 반</label>`) + `<div class="seg" id="ctabs" style="margin-bottom:12px;flex-wrap:wrap"></div><div id="dl"><p class="empty">불러오는 중…</p></div>`;
+  bindDate();
+  $("#allc").onchange = (e) => { S.allClasses = e.target.checked; render(); };
+  try { S.day = await api(`/api/day?date=${S.date}${S.allClasses ? "&all=1" : ""}`); } catch (e) { $("#dl").innerHTML = `<p class="empty">${esc(e.message)}</p>`; return; }
+  dirty = new Set();
+  const curCourse = new Map((S.day.curricula || []).map((x) => [x.id, x.course]));
+  const courseOf = (c) => c.course || curCourse.get(c.cur) || "";
+  const tabs = ["", ...courses()].filter((co) => !co || S.day.classes.some((c) => courseOf(c) === co));
+  if (S.course && !tabs.includes(S.course)) S.course = "";
+  $("#ctabs").innerHTML = tabs.length > 1 ? tabs.map((co) => `<button data-co="${esc(co)}" class="${(S.course || "") === co ? "on" : ""}">${esc(co || "전체")} ${co ? S.day.classes.filter((c) => courseOf(c) === co).length : S.day.classes.length}</button>`).join("") : "";
+  $("#ctabs").hidden = tabs.length <= 1;
+  $$("#ctabs button").forEach((b) => (b.onclick = () => { S.course = b.dataset.co; renderDay(); }));
+  const cs = S.day.classes.filter((c) => !S.course || courseOf(c) === S.course);
+  if (!cs.length) { $("#dl").innerHTML = `<p class="empty">${dlabel(S.date)}에 수업이 있는 반이 없어요.<br>${S.me.role === "director" ? "관리 탭에서 반과 요일을 만들어 주세요." : "원장님께 반 배정을 부탁드려요."}</p>`; return; }
+  $("#dl").innerHTML = `<div class="info" id="attboard"></div>` + cs.map(classCard).join("");
+  attBoard();
+  cs.forEach((c) => bindClass(c));
+  if (cs.length === 1) $(".card").classList.add("open");
+}
+function attBoard() {
+  const el = $("#attboard"); if (!el || !S.day) return;
+  const cnt = (list, v) => list.filter((s) => (s.rec && s.rec.att) === v).length;
+  const all_ = S.day.classes.flatMap((c) => c.students);
+  const none = (list) => list.filter((s) => !(s.rec && s.rec.att)).length;
+  el.innerHTML = `<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><b style="margin-right:4px">${S.date === S.today ? "오늘" : dlabel(S.date)} 출석</b>
+    <span class="tag go">출석 ${cnt(all_, "in")}</span><span class="tag warn">지각 ${cnt(all_, "late")}</span><span class="tag bad">결석 ${cnt(all_, "out")}</span><span class="tag">미체크 ${none(all_)}</span></div>
+    <div style="margin-top:6px;font-size:13px;color:var(--mute)">${S.day.classes.map((c) => `${esc(c.name)} ${none(c.students) ? `<b style="color:var(--warn)">미체크 ${none(c.students)}</b>` : "✓"}`).join(" · ")}</div>
+    <div style="margin-top:4px;font-size:12px;color:var(--mute)">출석 버튼은 누르는 즉시 저장돼요.${S.settings.notifyOut || S.settings.notifyLate || S.settings.notifyIn ? ` ${[S.settings.notifyIn && "등원", S.settings.notifyLate && "지각", S.settings.notifyOut && "결석"].filter(Boolean).join("·")}은 학부모님께 바로 문자가 가요(오늘 날짜만).` : ""}</div>`;
+}
+const ALERT = { att_in: "등원", att_late: "지각", att_out: "결석" };
+const hwParts = (t) => String(t || "").split(/\s*,\s*/).filter(Boolean);
+const hwHas = (t, h) => hwParts(t).some((p) => p === h || p.startsWith(h + " "));
+function seqRow(u) {
+  if (!u.lessons.length) return u.cur ? "" : `<p class="mini">진도표가 연결되지 않았어요. 내용을 직접 적어 주세요.</p>`;
+  const opts = u.lessons.map((l) => `<option value="${l.seq}" ${l.seq === u.seq ? "selected" : ""}>${l.seq}. ${esc(l.title || l.content || "")}</option>`).join("");
+  return `<div class="row"><label>차시</label><div class="ctrl"><select data-f="seq" style="max-width:100%;flex:1;min-width:0;border:1.5px solid var(--line);border-radius:9px;padding:6px 8px;background:#fff">${opts}${!u.lessons.some((l) => l.seq === u.seq) ? `<option value="${u.seq}" selected>진도표 끝</option>` : ""}</select></div></div>`;
+}
+const lt = (l) => (l ? [l.title, l.content].filter(Boolean).join(" · ") : "");
+// same rule as the server: with a rotation, "다음 수업" is the next program in line
+function nextTextC(u, cur, seq) {
+  const here = (u.progs || []).find((p) => p.id === cur);
+  const nextL = (p, sq) => (p ? p.lessons.find((l) => l.seq > sq) || (p.loop ? p.lessons[0] : null) : null);
+  if (u.rot && u.rot.length > 1 && u.rot.includes(cur)) {
+    const nid = u.rot[(u.rot.indexOf(cur) + 1) % u.rot.length], np = (u.progs || []).find((p) => p.id === nid);
+    if (!np) return "";
+    const L = nid === cur ? nextL(np, seq) : np.lessons.find((l) => l.seq === np.pos);
+    return L ? `${np.name} · ${lt(L)}` : np.name;
+  }
+  return lt(nextL(here, seq));
+}
+// "다음 수업" dropdown: 자동(순서대로) or any lesson of any 진도표
+function nextPicker(u) {
+  const all = S.day.curricula || [], la = S.day.lessonsAll || {};
+  const val = u.ncur ? `${u.ncur}|${u.nseq ?? ""}` : "";
+  const groups = all.map((c) => {
+    const ls = la[c.id] || [];
+    const opts = ls.length ? ls.map((l) => `<option value="${c.id}|${l.seq}" ${val === `${c.id}|${l.seq}` ? "selected" : ""}>${esc(c.name)} · ${l.seq}. ${esc(l.title || l.content || "")}</option>`).join("") : `<option value="${c.id}|" ${val === `${c.id}|` ? "selected" : ""}>${esc(c.name)}</option>`;
+    return `<optgroup label="${esc(c.name)}">${opts}</optgroup>`;
+  }).join("");
+  return `<select data-f="nextpick" style="max-width:100%;min-width:0;border:1.5px solid var(--line);border-radius:9px;padding:6px 8px;background:#fff"><option value="">자동 (순서대로 다음 수업)</option>${groups}</select>`;
+}
+function nextPickText(u, val, todayCur) {
+  const [cur, sq] = val.split("|"), c = (S.day.curricula || []).find((x) => x.id === cur);
+  const L = ((S.day.lessonsAll || {})[cur] || []).find((l) => String(l.seq) === sq);
+  if (!c) return "";
+  if (!L) return c.name;
+  return cur === todayCur && !(u.rot && u.rot.length > 1) ? lt(L) : `${c.name} · ${lt(L)}`;
+}
+function fillLesson(box, u, cur, seq) {
+  const p = (u.progs || []).find((x) => x.id === cur);
+  const L = p ? p.lessons.find((l) => l.seq === seq) : null;
+  $("[data-f=today]", box).value = L ? (u.rot && u.rot.length > 1 ? `${p.name} · ${lt(L)}` : lt(L)) : p ? (p.lessons.length ? "진도표 끝" : p.name) : "";
+  $("[data-f=hw]", box).value = (L && L.hw) || "";
+  const np = $("[data-f=nextpick]", box);
+  $("[data-f=next]", box).value = np && np.value ? nextPickText(u, np.value, cur) : nextTextC(u, cur, seq);
+  $$("[data-hwp]", box).forEach((b) => b.classList.toggle("on", hwHas($("[data-f=hw]", box).value, b.dataset.hwp)));
+}
+function lessonBox(u, key, compact, curId) {
+  if (!u) return "";
+  const rotStrip = u.rot && u.rot.length > 1 ? `<div class="rot">${u.rot.map((id) => { const p = (u.progs || []).find((x) => x.id === id) || (S.day.curricula || []).find((x) => x.id === id); return `<span class="${id === u.cur ? "on" : ""}">${esc(p ? p.name : "?")}</span>`; }).join("<i>→</i>")}<i>→ 처음으로</i></div>` : "";
+  const picker = S.day && S.day.curricula && S.day.curricula.length ? `<div class="row"><label>${u.rot && u.rot.length > 1 ? "오늘 수업" : "진도표"}</label><select data-cur="${key}" style="max-width:100%;min-width:0;border:1.5px solid var(--line);border-radius:9px;padding:6px 8px;background:#fff">${curOptions(S.day.curricula, u.cur || curId, "진도표 고르기")}</select></div>` : "";
+  return `<div class="lesson" data-unit="${esc(u.unit)}" data-key="${key}" data-curid="${esc(u.cur || "")}">
+    ${rotStrip}${picker}<div class="seqrow">${seqRow(u)}</div>
+    <div class="row"><label>오늘 할 일</label><textarea data-f="today" rows="1">${esc(u.today)}</textarea></div>
+    <div class="row"><label>오늘 숙제</label><div style="min-width:0"><textarea data-f="hw" rows="1" style="width:100%">${esc(u.hw)}</textarea>
+      <div class="hwp">${(S.settings.hwPresets || []).map((h) => `<button type="button" data-hwp="${esc(h)}" class="${hwHas(u.hw, h) ? "on" : ""}">${esc(h)}</button>`).join("")}</div></div></div>
+    <div class="row"><label>다음 수업</label><div style="min-width:0;display:grid;gap:6px">${nextPicker(u)}<textarea data-f="next" rows="1" style="width:100%">${esc(u.next)}</textarea></div></div>
+    <div class="ctrl"><div class="seg adv"><button type="button" data-v="1" class="${u.adv ? "on" : ""}">다음엔 다음 차시로</button><button type="button" data-v="0" class="${u.adv ? "" : "on"}">이번 차시 다시</button></div>
+    ${u.saved ? `<span class="tag go">저장됨</span>` : `<span class="tag">진도표에서 자동으로 채웠어요</span>`}</div>
+  </div>`;
+}
+// 저녁 문자: 자동 발송 / 이 날은 자동으로 보내지 않고 따로 보내기
+const HOLDS = [["", "자동 발송"], ["결석", "결석"], ["보강", "보강"], ["결강", "결강"], ["미작성", "미작성"]];
+function setHold(row, v) { $$(".seg.hold button", row).forEach((x) => x.classList.toggle("on", x.dataset.v === v)); }
+function stuRow(c, s) {
+  const r = s.rec || {};
+  const att = r.att || "", hw = r.hwprev || "";
+  const prev = c.kind === "group" ? c.unit && c.unit.prevHw : s.unit && s.unit.prevHw;
+  return `<div class="stu" data-sid="${s.id}">
+    <div class="nm">${esc(s.name)} ${s.hasPhone ? "" : '<span class="tag warn">학부모 번호 없음</span>'} ${s.rec && (s.rec.hwprev || s.rec.note) ? '<span class="tag go">저장됨</span>' : ""} ${dailyTag(s.daily)}
+      <span class="alerts">${(s.alerts || []).map((a) => `<span class="tag ${a.status === "sent" ? "" : "bad"}" title="${esc(a.err || "")}">${ALERT[a.kind]} 알림 ${a.status === "sent" ? "보냄" : "실패"}</span>`).join("")}</span></div>
+    ${c.kind === "private" ? lessonBox(s.unit, s.id, true, s.cur) + (prev ? `<div class="prevhw">지난 숙제: ${esc(prev)}</div>` : "") : ""}
+    <div class="line"><small>출석</small><div class="seg att">${ATT.map(([v, l]) => `<button type="button" data-v="${v}" class="${att === v ? "on" : ""}">${l}</button>`).join("")}</div></div>
+    <div class="line" style="margin-top:6px"><small>지난 숙제</small><div class="seg hw">${HW.map(([v, l]) => `<button type="button" data-v="${v}" class="${hw === v ? "on" : ""}">${l}</button>`).join("")}</div>
+      <button type="button" class="btn sm" data-note>${r.note ? "한마디 ✎" : "+ 한마디"}</button>
+      ${S.day.media ? `<label class="btn sm" style="display:inline-flex;align-items:center;gap:4px">사진·영상${(s.media || []).length ? ` ${s.media.length}` : ""}<input type="file" accept="image/*,video/*" multiple hidden data-up="${s.id}"></label>` : ""}</div>
+    <div class="line" style="margin-top:6px"><small>저녁 문자</small><div class="seg hold">${HOLDS.map(([v, l]) => `<button type="button" data-v="${v}" class="${(r.hold === "auto" ? "" : r.hold || (r.att === "out" ? "결석" : "")) === v ? "on" : ""}">${l}</button>`).join("")}</div></div>
+    <div class="note" ${r.note ? "" : "hidden"}><input data-f="note" maxlength="300" placeholder="선생님 한마디 (학부모 메시지에 들어가요)" value="${esc(r.note || "")}"></div>
+    ${S.day.media ? `<div class="thumbs" data-thumbs="${s.id}">${mediaThumbs(s)}</div>` : ""}
+  </div>`;
+}
+function mediaThumbs(s) {
+  return (s.media || []).map((m) => { const src = `/m/${m.id}?t=${s.mediaSig}`; return `<span class="th">${m.type === "video" ? `<video src="${src}#t=0.1" muted playsinline preload="metadata"></video><b>▶</b>` : `<img src="${src}" alt="" loading="lazy">`}<button type="button" data-mdel="${m.id}" aria-label="지우기">×</button></span>`; }).join("")
+    + ((s.media || []).length ? `<button type="button" class="btn sm" data-mlink="${location.origin}/p/${s.id}.${S.date}.${s.mediaSig}">링크 복사</button>` : "");
+}
+// photos are shrunk before upload (long side 1600px) so they load fast on parents' phones
+function shrink(file) {
+  return new Promise((ok) => {
+    if (!file.type.startsWith("image/") || file.type === "image/gif") return ok(file);
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const k = Math.min(1, 1600 / Math.max(img.width, img.height)), cv = document.createElement("canvas");
+      cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+      cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height); URL.revokeObjectURL(url);
+      cv.toBlob((b) => ok(b && b.size < file.size ? b : file), "image/jpeg", 0.82);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); ok(file); };
+    img.src = url;
+  });
+}
+// 영상 길이 (못 읽으면 0)
+const videoSecs = (f) => new Promise((ok) => { const v = document.createElement("video"), u = URL.createObjectURL(f); v.preload = "metadata"; v.onloadedmetadata = () => { URL.revokeObjectURL(u); ok(v.duration || 0); }; v.onerror = () => ok(0); setTimeout(() => ok(0), 4000); v.src = u; });
+const MAX_MIN = 5;
+// 큰 영상: 25MB씩 나눠 올려요 (중간에 끊겨도 그 조각만 다시)
+async function uploadBig(sid, f, label) {
+  const call = (p, b) => api(p, b);
+  const st = await call("/api/media/start", { sid, date: S.date, mime: f.type || "video/mp4", size: f.size });
+  const parts = [], total = Math.ceil(f.size / st.partSize);
+  try {
+    for (let i = 0; i < total; i++) {
+      const blob = f.slice(i * st.partSize, Math.min(f.size, (i + 1) * st.partSize));
+      let r, tries = 0;
+      while (true) {
+        r = await fetch(`/api/media/part?sid=${sid}&date=${S.date}&id=${st.id}&uploadId=${encodeURIComponent(st.uploadId)}&n=${i + 1}`, { method: "PUT", headers: { authorization: "Bearer " + token }, body: blob }).catch(() => null);
+        if (r && r.ok) break;
+        if (++tries >= 3) throw new Error("인터넷이 불안정해서 올리지 못했어요. 다시 시도해 주세요.");
+      }
+      parts.push(await r.json());
+      toast(`${label} 영상 올리는 중… ${Math.round(((i + 1) / total) * 100)}%`);
+    }
+    return await call("/api/media/finish", { sid, date: S.date, id: st.id, uploadId: st.uploadId, parts, mime: f.type || "video/mp4" });
+  } catch (e) { call("/api/media/abort", { sid, date: S.date, id: st.id, uploadId: st.uploadId }).catch(() => {}); throw e; }
+}
+async function uploadMedia(c, sid, files) {
+  const st = c.students.find((x) => x.id === sid);
+  let n = 0;
+  for (const f of files) {
+    const isVid = f.type.startsWith("video/");
+    if (isVid && S.day.bigVideo) {
+      const secs = await videoSecs(f);
+      if (secs > MAX_MIN * 60 + 5) { toast(`${f.name}: 영상은 ${MAX_MIN}분까지 올릴 수 있어요. (지금 ${Math.round(secs / 60)}분)`); continue; }
+      try { const d = await uploadBig(sid, f, `(${n + 1}/${files.length})`); st.media = [...(st.media || []), { id: d.id, type: d.type }]; st.mediaSig = d.sig; n++; } catch (e) { toast(e.message); }
+      continue;
+    }
+    if (isVid && f.size > 20 * 1024 * 1024) { toast(`${f.name}: 영상은 20MB(1분 정도)까지 올릴 수 있어요. 긴 영상 저장소를 연결하면 ${MAX_MIN}분까지 돼요.`); continue; }
+    toast(`올리는 중… (${n + 1}/${files.length})`);
+    const blob = await shrink(f);
+    const r = await fetch(`/api/media?sid=${sid}&date=${S.date}`, { method: "POST", headers: { "content-type": blob.type || f.type, authorization: "Bearer " + token }, body: blob });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) { toast(d.error || "올리지 못했어요."); continue; }
+    st.media = [...(st.media || []), { id: d.id, type: d.type }]; st.mediaSig = d.sig; n++;
+  }
+  const box = document.querySelector(`[data-thumbs="${sid}"]`); if (box) box.innerHTML = mediaThumbs(st);
+  const lab = document.querySelector(`[data-up="${sid}"]`); if (lab) lab.parentElement.firstChild.textContent = `사진·영상 ${st.media.length || ""}`;
+  if (n) toast(`${n}개 올렸어요. 학부모 메시지에 "사진 보기" 링크가 들어가요.`);
+}
+function classCard(c) {
+  const done = c.students.filter((s) => s.rec).length;
+  const hc = (v) => c.students.filter((s) => s.rec && s.rec.hwprev === v).length;
+  const hwSum = done ? `<span class="tag go">숙제 완료 ${hc("done")}</span>${hc("part") ? `<span class="tag warn">미흡 ${hc("part")}</span>` : ""}${hc("none") ? `<span class="tag bad">미제출 ${hc("none")}</span>` : ""}` : "";
+  return `<div class="card" data-cid="${c.id}"><div class="hd"><h3>${esc(c.name)}</h3><span class="tag">${c.kind === "group" ? "그룹" : "개별"}</span>${c.time ? `<span class="tag">${esc(c.time)}</span>` : ""}
+    <span class="sp"></span>${hwSum}${done ? `<span class="tag go">${done}/${c.students.length} 저장</span>` : `<span class="tag">${c.students.length}명</span>`}</div>
+    <div class="bd">
+      ${c.kind === "group" ? lessonBox(c.unit, "c") + (c.unit && c.unit.prevHw ? `<div class="prevhw">지난 숙제: ${esc(c.unit.prevHw)}</div>` : "") : ""}
+      ${c.students.length ? `<div class="quick"><button type="button" class="btn sm" data-all-att>모두 출석</button><button type="button" class="btn sm" data-all-hw>모두 숙제 완료</button></div>` + c.students.map((s) => stuRow(c, s)).join("") : `<p class="empty" style="padding:16px">이 반에 학생이 없어요.</p>`}
+      <div class="savebar"><button type="button" class="btn go" data-save>저장하기</button></div>
+    </div></div>`;
+}
+function lessonsFor(c, key) { return key === "c" ? c.unit.lessons : c.students.find((s) => s.id === key).unit.lessons; }
+function bindClass(c) {
+  const el = $(`.card[data-cid="${c.id}"]`);
+  const date = S.date, btn = () => $("[data-save]", el);
+  const autoSave = async () => {
+    pending.delete(c.id);
+    const { units, students } = gather(el);
+    try {
+      await api("/api/day", { date, classId: c.id, units, students });
+      dirty.delete(c.id);
+      // homework/한마디 typed before 출석 isn't stored on the server yet, so keep the local copy until it is
+      if (!students.some((s) => !s.att && !s.hold && (s.hwprev || s.note))) dropDraft(date, c.id);
+      if (btn()) btn().textContent = `자동 저장됨 ✓ ${new Date().toTimeString().slice(0, 5)}`;
+    } catch (e) { if (btn()) btn().textContent = "저장하기 • (자동 저장 실패, 눌러서 다시)"; }
+  };
+  const mark = () => {
+    dirty.add(c.id); saveDraft(date, c.id, el);
+    btn().textContent = "저장 중… •";
+    clearTimeout(el._t); el._t = setTimeout(autoSave, 2000); pending.set(c.id, () => { clearTimeout(el._t); return autoSave(); });
+  };
+  { const d = readDraft(date, c.id); if (d) { applyDraft(el, d); mark(); el.classList.add("open"); } }
+  $(".hd", el).onclick = () => el.classList.toggle("open");
+  el.addEventListener("click", (e) => {
+    const b = e.target.closest(".seg button");
+    if (b) {
+      const seg = b.parentElement;
+      if (seg.classList.contains("att")) { if (!b.classList.contains("on")) setAtt(c, b.closest(".stu"), b.dataset.v); return; }
+      if (seg.classList.contains("hold")) { setHold(b.closest(".stu"), b.classList.contains("on") && b.dataset.v ? "" : b.dataset.v); mark(); return; }
+      $$("button", seg).forEach((x) => x.classList.toggle("on", x === b && !(seg.classList.contains("hw") && b.classList.contains("on")))); mark(); return;
+    }
+    const ml = e.target.closest("[data-mlink]");
+    if (ml) {
+      e.preventDefault();
+      const u = ml.dataset.mlink, done = () => toast("사진 링크를 복사했어요. 카톡에 붙여 넣으세요");
+      if (navigator.clipboard) navigator.clipboard.writeText(u).then(done).catch(() => prompt("이 주소를 복사하세요", u)); else prompt("이 주소를 복사하세요", u);
+      return;
+    }
+    const md = e.target.closest("[data-mdel]");
+    if (md) {
+      e.preventDefault();
+      if (!confirm("이 사진·영상을 지울까요?")) return;
+      const sid = md.closest(".stu").dataset.sid, st = c.students.find((x) => x.id === sid);
+      api("/api/media/delete", { id: md.dataset.mdel }).then(() => { st.media = st.media.filter((m) => m.id !== md.dataset.mdel); $(`[data-thumbs="${sid}"]`).innerHTML = mediaThumbs(st); toast("지웠어요"); }).catch((err) => toast(err.message));
+      return;
+    }
+    if (e.target.closest(".th")) { const t = e.target.closest(".th").querySelector("img,video"); if (t) window.open(t.src.split("#")[0], "_blank"); return; }
+    const hp = e.target.closest("[data-hwp]");
+    if (hp) {
+      const box = hp.closest(".lesson"), ta = $("[data-f=hw]", box), h = hp.dataset.hwp;
+      let parts = hwParts(ta.value);
+      if (h === "숙제 없음") parts = hwHas(ta.value, h) ? [] : [h];
+      else if (hwHas(ta.value, h)) parts = parts.filter((p) => !(p === h || p.startsWith(h + " ")));
+      else parts = [...parts.filter((p) => p !== "숙제 없음"), h];
+      ta.value = parts.join(", ");
+      $$("[data-hwp]", box).forEach((b) => b.classList.toggle("on", hwHas(ta.value, b.dataset.hwp)));
+      if (hwHas(ta.value, h) && /워크북|문제/.test(h)) { ta.focus(); ta.selectionStart = ta.selectionEnd = ta.value.length; } // 쪽수 이어서 쓰기
+      mark(); return;
+    }
+    if (e.target.closest("[data-note]")) { const n = $(".note", e.target.closest(".stu")); n.hidden = !n.hidden; if (!n.hidden) $("input", n).focus(); return; }
+    if (e.target.closest("[data-all-att]")) {
+      const rows = $$(".stu", el).filter((r) => !$(".seg.att .on", r));
+      if (!rows.length) return toast("모두 출석 체크돼 있어요");
+      if (S.settings.notifyIn && S.date === S.today && !confirm(`${rows.length}명을 출석으로 저장하고 학부모님께 등원 문자를 보낼까요?`)) return;
+      rows.forEach((r) => setAtt(c, r, "in", true)); return;
+    }
+    if (e.target.closest("[data-all-hw]")) { $$(".seg.hw", el).forEach((s) => $$("button", s).forEach((x) => x.classList.toggle("on", x.dataset.v === "done"))); mark(); return; }
+    if (e.target.closest("[data-save]")) saveClass(c, el);
+  });
+  el.addEventListener("input", (e) => {
+    if (e.target.dataset.f === "hw") { const box = e.target.closest(".lesson"); $$("[data-hwp]", box).forEach((b) => b.classList.toggle("on", hwHas(e.target.value, b.dataset.hwp))); }
+    mark();
+  });
+  el.addEventListener("change", async (e) => {
+    if (e.target.dataset.up) { const files = [...e.target.files]; e.target.value = ""; if (files.length) await uploadMedia(c, e.target.dataset.up, files); return; }
+    const box = e.target.closest(".lesson");
+    if (!box) return;
+    const uu = box.dataset.key === "c" ? c.unit : c.students.find((x) => x.id === box.dataset.key).unit;
+    if (e.target.dataset.cur !== undefined && e.target.matches("select[data-cur]")) {
+      const cur = e.target.value;
+      if (!cur) return;
+      try {
+        let p = (uu.progs || []).find((x) => x.id === cur);
+        if (!p) { p = (await api(`/api/unitprog?unit=${encodeURIComponent(uu.unit)}&cur=${cur}&date=${S.date}`)).prog; if (p) uu.progs = [...(uu.progs || []), p]; }
+        if (!p) return toast("진도표를 불러오지 못했어요.");
+        uu.cur = cur; uu.lessons = p.lessons; uu.seq = p.pos; box.dataset.curid = cur;
+        $(".seqrow", box).innerHTML = seqRow(uu);
+        $$(".rot span", box).forEach((sp, i) => sp.classList.toggle("on", uu.rot[i] === cur));
+        fillLesson(box, uu, cur, p.pos);
+        // a private student without a rotation keeps the new 진도표 from now on
+        if (box.dataset.key !== "c" && !(uu.rot && uu.rot.length > 1)) await api("/api/student/cur", { id: box.dataset.key, cur, start: p.pos });
+        mark();
+      } catch (err) { toast(err.message); }
+      return;
+    }
+    if (e.target.dataset.f === "nextpick") {
+      const sq = $("[data-f=seq]", box);
+      $("[data-f=next]", box).value = e.target.value ? nextPickText(uu, e.target.value, box.dataset.curid) : nextTextC(uu, box.dataset.curid, sq ? +sq.value : uu.seq);
+      mark(); return;
+    }
+    if (e.target.dataset.f !== "seq") return;
+    fillLesson(box, uu, box.dataset.curid, +e.target.value);
+    mark();
+  });
+}
+async function setAtt(c, row, v, quiet) {
+  const sid = row.dataset.sid, st = c.students.find((x) => x.id === sid);
+  const prev = st.rec ? st.rec.att : "";
+  $$(".seg.att button", row).forEach((x) => x.classList.toggle("on", x.dataset.v === v));
+  try {
+    const h0 = ($(".seg.hold .on", row) || {}).dataset?.v || "";
+    const r = await api("/api/attend", { date: S.date, sid, att: v, hold: h0 });
+    st.rec = { ...(st.rec || {}), att: v };
+    // 결석이면 저녁 문자를 자동으로 "결석(따로 보내기)"으로, 다시 출석하면 자동 발송으로
+    const h = ($(".seg.hold .on", row) || {}).dataset?.v || "";
+    if (v === "out" && !h) { setHold(row, "결석"); row.dispatchEvent(new Event("input", { bubbles: true })); }
+    else if (v !== "out" && h === "결석") { setHold(row, ""); row.dispatchEvent(new Event("input", { bubbles: true })); }
+    if (r.sms && r.sms !== "already") {
+      const ok = r.sms === "sent", kind = "att_" + v;
+      st.alerts = [...(st.alerts || []).filter((a) => a.kind !== kind), { kind, status: ok ? "sent" : "failed", err: ok ? null : r.sms }];
+      $(".alerts", row).innerHTML = st.alerts.map((a) => `<span class="tag ${a.status === "sent" ? "" : "bad"}" title="${esc(a.err || "")}">${ALERT[a.kind]} 알림 ${a.status === "sent" ? "보냄" : "실패"}</span>`).join("");
+      if (!quiet) toast(ok ? `${st.name}: ${ALERT[kind]} 문자를 학부모님께 보냈어요` : `저장했지만 문자는 실패: ${r.sms}`);
+    } else if (!quiet) toast(`${st.name} ${({ in: "출석", late: "지각", out: "결석" })[v]} 저장`);
+    attBoard();
+  } catch (e) {
+    $$(".seg.att button", row).forEach((x) => x.classList.toggle("on", x.dataset.v === prev));
+    toast(e.message);
+  }
+}
+async function saveClass(c, el) {
+  clearTimeout(el._t); pending.delete(c.id);
+  const { units, students } = gather(el);
+  const missingAtt = students.filter((s) => !s.att).length;
+  if (missingAtt && missingAtt === students.length && !confirm("출석을 아무도 체크하지 않았어요. 진도만 저장할까요?")) return;
+  const btn = $("[data-save]", el); btn.disabled = true; btn.textContent = "저장 중…";
+  try {
+    await api("/api/day", { date: S.date, classId: c.id, units, students });
+    dirty.delete(c.id); if (!students.some((s) => !s.att && (s.hwprev || s.note))) dropDraft(S.date, c.id);
+    toast(missingAtt && missingAtt < students.length ? `저장했어요. 출석 체크 안 한 ${missingAtt}명은 메시지에서 빠져요.` : "저장했어요");
+    await renderDay(); const again = $(`.card[data-cid="${c.id}"]`); if (again) again.classList.add("open");
+  } catch (e) { toast(e.message); btn.disabled = false; btn.textContent = "저장하기 •"; }
+}
+
+/* ---------------- 학부모 메시지 ---------------- */
+async function renderMsgsKeep() { const y = window.scrollY; await renderMsgs(); window.scrollTo(0, y); }
+async function renderMsgs() {
+  const m = $("#main");
+  m.innerHTML = dateBar(`<div class="seg" id="kind">${Object.entries(KIND).map(([k, v]) => `<button data-k="${k}" class="${S.kind === k ? "on" : ""}">${v}</button>`).join("")}</div>`) + `<div id="ml"><p class="empty">불러오는 중…</p></div>`;
+  bindDate();
+  $$("#kind button").forEach((b) => (b.onclick = () => { S.kind = b.dataset.k; renderMsgs(); }));
+  let d; try { d = await api(`/api/msgs?date=${S.date}&kind=${S.kind}`); } catch (e) { $("#ml").innerHTML = `<p class="empty">${esc(e.message)}</p>`; return; }
+  const s = d.settings, rows = d.rows; S.msgSet = s;
+  { const key = S.date + "|" + S.kind; if (S.rsKey !== key) { S.rs = new Set(); S.rsKey = key; } }
+  const waitNew = rows.filter((r) => r.status !== "sent" && r.checked).length;
+  const pickedRows = rows.filter((r) => r.status === "sent" && S.rs.has(r.id));
+  const waiting = waitNew + pickedRows.length;
+  const when = S.kind === "daily" || S.kind === "missing" || S.kind === "warn" ? "매일" : S.kind === "weekly" ? `매주 ${DOW[s.weeklyDay]}요일` : "매달 말일";
+  const auto = S.kind === "warn" ? (s.warnOn ? `숙제 ${s.warnPart ? "미제출·미흡" : "미제출"}이 ${s.warnCount}번 쌓인 학생의 학부모님께만 따로 보내요. 보낸 뒤에는 다시 0부터 세요. ${s.composeTime}에 미리보기, ${s.autoSend ? s.sendTime + "에 자동 발송" : "자동 발송은 꺼져 있어요"}.` : "누적 알림이 꺼져 있어요. 관리 탭에서 켤 수 있어요.") : S.kind === "missing" ? (s.missingAuto ? `숙제를 ${s.missingPart ? "미제출·미흡" : "미제출"}로 체크한 학생의 학부모님께만 따로 보내요. ${s.composeTime}에 미리보기, ${s.autoSend ? s.sendTime + "에 자동 발송" : "자동 발송은 꺼져 있어요"}.` : `미제출 알림 자동 발송이 꺼져 있어요. 필요할 때 "지금 미리보기 만들기"를 누른 뒤 보내세요.`) : S.kind === "monthly" ? `${when} ${s.composeTime}에 미리보기를 만들어요. ${s.monthlyAuto && s.autoSend ? s.sendTime + "에 체크된 메시지를 자동으로 보내요." : "자동으로 보내지 않아요. 보낼 학생만 체크하고 '체크된 건 지금 보내기'를 눌러 주세요."}` : S.kind === "weekly" ? `${when} ${s.composeTime}에 미리보기를 만들어요. ${s.weeklySkipDay ? "기준일(금요일) 수업은 일간 알림톡이 따로 가니 빼고, 월요일부터 전날까지 한 수업을 요약해요." : "기준일 수업까지 포함해 요약해요."} ${s.weeklyAuto && s.autoSend ? s.sendTime + "에 체크된 메시지를 자동으로 보내요." : "자동으로 보내지 않아요. 보낼 학생만 체크하고 '체크된 건 지금 보내기'를 눌러 주세요."}` : s.autoSend ? `${when} ${s.composeTime}에 미리보기를 만들고, ${s.sendTime}에 체크된 메시지를 자동으로 보내요.` : `${when} ${s.composeTime}에 미리보기를 만들어요. 자동 발송은 꺼져 있어요.`;
+  $("#ml").innerHTML = `
+    ${S.sms && !S.sms.ready ? `<div class="info warn">솔라피 설정이 아직 없어서 메시지가 나가지 않아요. (${S.sms.missing.join(", ")})</div>` : ""}
+    <div class="info">${auto}${d.sentAuto ? " <b>오늘 자동 발송 완료.</b>" : ""}</div>
+    <div class="bar"><button class="btn" id="mk">${rows.length ? "미리보기 다시 만들기" : "지금 미리보기 만들기"}</button>
+      <button class="btn dark" id="snd" ${waiting ? "" : "disabled"}>체크된 ${waiting}건 지금 보내기</button>
+      ${s.channel === "ata" && rows.some((r) => r.status !== "sent") ? `<span class="seg" id="allsty" title="안 보낸 메시지 전체 형태 바꾸기"><button data-as="basic">전체 기본형</button><button data-as="cushion">전체 쿠션형</button></span>` : ""}
+      ${rows.some((r) => r.status !== "sent") ? `<span class="seg" id="chkseg"><button type="button" id="chkon" ${rows.some((r) => r.status !== "sent" && !r.hold) ? "" : "disabled"}>모두 체크</button><button type="button" id="chkoff" ${rows.some((r) => (r.status !== "sent" && r.checked) || (r.status === "sent" && S.rs.has(r.id))) ? "" : "disabled"}>모두 해제</button></span>` : ""}
+      <span class="sp"></span><span style="font-size:13px;color:var(--mute)">총 ${rows.length}건 · <b style="color:var(--go)">전송됨 ${rows.filter((r) => r.status === "sent").length}</b>${rows.some((r) => r.status === "failed") ? ` · <b style="color:var(--bad)">실패 ${rows.filter((r) => r.status === "failed").length}</b>` : ""}</span></div>
+    ${rows.length ? rows.filter((r) => !(r.hold && r.status !== "sent")).map(msgCard).join("") + (rows.some((r) => r.hold && r.status !== "sent") ? `<h3 style="margin:22px 0 4px;font-size:16px">따로 보낼 메시지 <small style="font-weight:400;color:var(--mute)">· 결석·보강·결강·미작성으로 표시해서 자동으로 나가지 않아요</small></h3>` + rows.filter((r) => r.hold && r.status !== "sent").map(msgCard).join("") : "") : `<p class="empty">아직 미리보기가 없어요.<br>수업 기록을 저장한 뒤 "지금 미리보기 만들기"를 누르거나, ${s.composeTime}까지 기다리면 자동으로 만들어져요.</p>`}`;
+  $("#mk").onclick = async () => {
+    const edited = rows.some((r) => r.edited && r.status !== "sent");
+    const force = edited ? confirm("직접 고친 메시지도 새로 만들까요?\n[확인] 고친 것도 새로 / [취소] 고친 것은 그대로") : false;
+    try { const r = await api("/api/msgs/compose", { date: S.date, kind: S.kind, force }); toast(`${r.made}건 만들었어요`); renderMsgs(); } catch (e) { toast(e.message); }
+  };
+  $("#snd").onclick = async () => {
+    const warn = pickedRows.length ? `\n\n⚠ 이미 한 번 받은 ${pickedRows.length}명(${pickedRows.slice(0, 6).map((r) => r.name).join(", ")}${pickedRows.length > 6 ? " 외" : ""})에게는 한 번 더 가요.` : "";
+    if (!confirm(`체크된 ${waiting}건을 지금 학부모님께 보낼까요?${warn}`)) return;
+    $("#snd").disabled = true;
+    try {
+      let sent = 0, failed = 0;
+      if (waitNew) { const r = await api("/api/msgs/send", { date: S.date, kind: S.kind }); sent += r.sent; failed += r.failed; }
+      for (const r0 of pickedRows) { const r = await api("/api/msgs/resend", { id: r0.id }); sent += r.sent || 0; failed += r.failed || 0; }
+      S.rs = new Set();
+      toast(`전송됨 ${sent}건${failed ? `, 실패 ${failed}건 (빨간 표시 확인)` : ""}`); renderMsgs();
+    } catch (e) { toast(e.message); renderMsgs(); }
+  };
+  const restyle = async (style, id) => { try { const r = await api("/api/msgs/style", { date: S.date, kind: S.kind, style, id }); toast(style === "cushion" ? `쿠션멘트형으로 바꿨어요 (${r.made}건)` : `기본형으로 바꿨어요 (${r.made}건)`); renderMsgs(); } catch (e) { toast(e.message); } };
+  $$("#allsty button").forEach((b) => (b.onclick = () => { if (!rows.some((r) => r.edited && r.status !== "sent") || confirm("직접 고친 메시지도 새로 만들어져요. 바꿀까요?")) restyle(b.dataset.as); }));
+  $$("[data-kakao]").forEach((cb) => (cb.onchange = async () => { try { await api("/api/msgs/update", { id: cb.closest(".msg").dataset.id, kakao: cb.checked }); toast(cb.checked ? "알림톡으로 보내요" : "문자로 보내요"); } catch (e) { toast(e.message); cb.checked = !cb.checked; } }));
+  $$("[data-resend]").forEach((b) => (b.onclick = async () => {
+    const el = b.closest(".msg"), k = $("[data-kakao]", el), row0 = rows.find((x) => x.id === el.dataset.id) || {}, how = k ? (k.checked ? "알림톡" : "문자") : (row0.ata && !row0.edited && row0.kakao !== 0 ? "알림톡" : "문자");
+    if (!confirm(`${$("b", el).textContent} 학부모님께 ${how}로 다시 보낼까요?\n지금 설정과 수업 기록으로 내용을 다시 만들어 보내요.`)) return;
+    b.disabled = true;
+    try { const r = await api("/api/msgs/resend", { id: el.dataset.id, kakao: k ? k.checked : undefined }); toast(r.sent ? "다시 보냈어요" : r.failed ? "보내지 못했어요. 아래 오류를 확인해 주세요" : "보낼 내용이 없어요"); renderMsgs(); } catch (e) { toast(e.message); b.disabled = false; }
+  }));
+  const chk = (on) => async () => { try { const r = await api("/api/msgs/checkall", { date: S.date, kind: S.kind, checked: on }); toast(on ? `${r.n}건 모두 체크했어요${r.skipped ? ` (결석·보강·결강·미작성 ${r.skipped}건은 빼고 — 아래 '따로 보낼 메시지'에서 따로 보내세요)` : ""}` : `모두 해제했어요. 보낼 학생만 체크하세요`); S.rs = new Set(); renderMsgsKeep(); } catch (e) { toast(e.message); } };
+  if ($("#chkon")) $("#chkon").onclick = chk(true);
+  if ($("#chkoff")) $("#chkoff").onclick = chk(false);
+  $$("[data-sendone]").forEach((b) => (b.onclick = async () => {
+    const el = b.closest(".msg"), id = el.dataset.id;
+    if (!confirm(`${$("b", el).textContent} 학부모님께 이 메시지를 지금 보낼까요?`)) return;
+    b.disabled = true;
+    try { await api("/api/msgs/update", { id, checked: true }); const r = await api("/api/msgs/send", { date: S.date, kind: S.kind, ids: [id] }); toast(r.sent ? "보냈어요" : "보내지 못했어요. 오류를 확인해 주세요"); renderMsgs(); } catch (e) { toast(e.message); b.disabled = false; }
+  }));
+  $$("[data-mdelmsg]").forEach((b) => (b.onclick = async () => {
+    const el = b.closest(".msg"); if (!confirm(`${$("b", el).textContent} 학생 메시지를 지울까요?\n지운 메시지는 보내지 않고, 자동으로 다시 만들어지지도 않아요.`)) return;
+    try { await api("/api/msgs/update", { id: el.dataset.id, delete: true }); toast("지웠어요"); renderMsgs(); } catch (e) { toast(e.message); }
+  }));
+  $$("[data-ms]").forEach((b) => (b.onclick = () => restyle(b.dataset.ms, b.closest(".msg").dataset.id)));
+  $$(".msg").forEach((el) => {
+    const id = el.dataset.id, ta = $("textarea", el), cb = $("input[type=checkbox]", el);
+    const fit = () => { ta.style.height = "auto"; ta.style.height = ta.scrollHeight + 4 + "px"; }; fit();
+    if (cb && el.classList.contains("sent")) cb.onchange = () => { if (cb.checked) S.rs.add(id); else S.rs.delete(id); renderMsgsKeep(); };
+    else if (cb) cb.onchange = async () => { const on = cb.checked, nm = $("b", el).textContent; try { await api("/api/msgs/update", { id, checked: on }); toast(on ? `${nm} 체크했어요` : `${nm} 체크를 풀었어요`); renderMsgsKeep(); } catch (e) { toast(e.message); } };
+    if (ta && !ta.readOnly) {
+      const saveTxt = async () => { clearTimeout(ta._t); pending.delete("m" + id); if (ta.value === ta.defaultValue) return; try { await api("/api/msgs/update", { id, text: ta.value }); ta.defaultValue = ta.value; $(".ed", el).hidden = false; $(".bytes", el).textContent = info(ta.value) + " · 자동 저장됨 ✓"; } catch (e) { toast(e.message); } };
+      ta.oninput = () => { $(".bytes", el).textContent = info(ta.value) + " · 저장 중…"; fit(); clearTimeout(ta._t); ta._t = setTimeout(saveTxt, 1500); pending.set("m" + id, saveTxt); };
+      ta.onblur = saveTxt;
+    }
+  });
+}
+const info = (t) => (bytes(t) > 90 ? `장문 ${bytes(t)}바이트` : `단문 ${bytes(t)}/90`);
+function msgCard(r) {
+  const [sl, sc] = ST[r.status] || ST.draft, sent = r.status === "sent", cu = r.style === "cushion";
+  const sty = S.msgSet && S.msgSet.channel === "ata" && !sent ? `<span class="seg mini"><button data-ms="basic" class="${cu ? "" : "on"}">기본형</button><button data-ms="cushion" class="${cu ? "on" : ""}">쿠션형</button></span>` : "";
+  return `<div class="msg ${sent ? "sent" : ""}" data-id="${r.id}"><div class="h">
+    ${sent ? `<input type="checkbox" data-pick ${S.rs && S.rs.has(r.id) ? "checked" : ""} aria-label="다시 보낼 아이로 고르기" title="이미 보낸 아이예요. 체크하면 한 번 더 보내요">` : `<input type="checkbox" ${r.checked ? "checked" : ""} aria-label="보내기">`}
+    <b>${esc(r.name)}</b><span style="color:var(--mute);font-size:13px">${esc(r.cname || "")} · ${esc(r.phone || "번호 없음")}</span><span class="sp"></span>${sty}
+    ${r.ata && !r.edited ? '<span class="tag go">알림톡</span>' : r.ata ? '<span class="tag warn">고쳐서 문자로</span>' : '<span class="tag">문자</span>'}<span class="tag ed" ${r.edited ? "" : "hidden"}>직접 고침</span>${r.hold && !sent ? `<span class="tag warn">${esc(r.hold)} · 자동 발송 안 함</span>` : ""}${!sent && !r.checked && r.hold ? `<button type="button" class="btn sm dark" data-sendone>이것만 지금 보내기</button>` : ""}${!sent && !r.checked && r.status !== "failed" ? (r.hold ? "" : '<span class="tag">보내지 않음</span>') : `<span class="tag ${sc} strong" ${r.status === "failed" ? `title="${esc(r.err || "")}"` : ""}>${sl}${sent && r.at ? " " + hm(r.at) : ""}${sent && r.sends > 1 ? ` · ${r.sends}번` : ""}</span>`}${sent ? "" : `<button type="button" class="btn sm" data-mdelmsg title="이 메시지 지우기">삭제</button>`}</div>
+    <div class="mopt">${S.msgSet && S.msgSet.channel === "ata" && !sent ? `<label><input type="checkbox" data-kakao ${r.kakao !== 0 ? "checked" : ""}> 알림톡으로 보내기 <small>(끄면 문자로 가요)</small></label>${!r.ata && !sent ? '<small>이 종류는 알림톡 템플릿이 없어서 문자로 가요</small>' : ""}` : ""}${sent ? `<span class="sp"></span><button type="button" class="btn sm" data-resend>다시 보내기</button>` : ""}</div>
+    <textarea ${sent ? "readonly" : ""}>${esc(r.text)}</textarea>
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--mute);margin-top:4px"><span class="bytes">${info(r.text)}</span>${r.err ? `<span style="color:var(--bad)">${esc(r.err)}</span>` : ""}</div></div>`;
+}
+
+/* ---------------- 보낸 메시지 ---------------- */
+const KIND_ALL = { ...KIND, att_in: "등원 알림", att_late: "지각 알림", att_out: "결석 알림" };
+const SF = { from: "", to: "", kind: "", q: "", st: "" };
+async function renderSent() {
+  const m = $("#main"), t = S.today;
+  if (!SF.from) { SF.to = t; SF.from = addDays(t, -6); }
+  m.innerHTML = `<div class="sec" style="padding:14px 16px"><div class="bar" style="margin:0;flex-wrap:wrap;gap:8px">
+      <input type="date" id="sf_from" value="${SF.from}"> <span>~</span> <input type="date" id="sf_to" value="${SF.to}">
+      <select id="sf_kind"><option value="">모든 종류</option>${Object.entries(KIND).map(([k, v]) => `<option value="${k}" ${SF.kind === k ? "selected" : ""}>${v}</option>`).join("")}</select>
+      <select id="sf_st"><option value="">전송됨 + 실패</option><option value="sent" ${SF.st === "sent" ? "selected" : ""}>전송됨만</option><option value="failed" ${SF.st === "failed" ? "selected" : ""}>실패만</option></select>
+      <input id="sf_q" placeholder="학생 이름" value="${esc(SF.q)}" style="flex:1;min-width:120px">
+    </div></div><div id="sl"><p class="empty">불러오는 중…</p></div>`;
+  const reload = () => { SF.from = $("#sf_from").value; SF.to = $("#sf_to").value; SF.kind = $("#sf_kind").value; SF.st = $("#sf_st").value; SF.q = $("#sf_q").value.trim(); loadSent(); };
+  ["sf_from", "sf_to", "sf_kind", "sf_st"].forEach((id) => ($("#" + id).onchange = reload));
+  let qt; $("#sf_q").oninput = () => { clearTimeout(qt); qt = setTimeout(reload, 300); };
+  loadSent();
+}
+async function loadSent() {
+  const box = $("#sl"); if (!box) return;
+  try {
+    const d = await api(`/api/sent?from=${SF.from}&to=${SF.to}&kind=${SF.kind}&st=${SF.st}&q=${encodeURIComponent(SF.q)}`);
+    if (!d.rows.length) { box.innerHTML = '<p class="empty">이 기간에 보낸 메시지가 없어요.</p>'; return; }
+    const ok = d.rows.filter((r) => r.status === "sent").length, bad = d.rows.length - ok;
+    let last = "";
+    box.innerHTML = `<p style="font-size:14px;color:var(--ink2);margin:4px 2px 10px">모두 ${d.rows.length}건 · <b style="color:var(--go)">전송됨 ${ok}</b>${bad ? ` · <b style="color:var(--bad)">실패 ${bad}</b>` : ""}</p>` + d.rows.map((r) => {
+      const day = r.date, head = day !== last ? `<h3 style="margin:18px 0 8px;font-size:15px;color:var(--ink2)">${dLabelC(day)}</h3>` : ""; last = day;
+      const sentAt = r.at ? new Date(r.at) : null, when = sentAt ? `${sentAt.getMonth() + 1}/${sentAt.getDate()} ${hm(r.at)}` : "";
+      const tag = r.status === "sent" ? `<span class="tag go strong">✓ 전송됨 ${when}</span>` : `<span class="tag bad strong" title="${esc(r.err || "")}">✕ 실패</span>`;
+      const how = r.ata && !r.edited && r.kakao !== 0 ? '<span class="tag go">알림톡</span>' : '<span class="tag">문자</span>';
+      return head + `<div class="msg ${r.status === "sent" ? "sent" : ""}" data-id="${r.id}"><div class="h"><b>${esc(r.name)}</b><span style="color:var(--mute);font-size:13px">${esc(r.cname || "")} · ${esc(r.phone || "")}</span><span class="tag">${esc(KIND_ALL[r.kind] || r.kind)}</span><span class="sp"></span>${how}${tag}${r.sends > 1 ? `<span class="tag">${r.sends}번</span>` : ""}${KIND[r.kind] ? '<button type="button" class="btn sm" data-resend2>다시 보내기</button>' : ""}</div>
+        <details><summary style="cursor:pointer;color:var(--ink2);font-size:14px;padding:4px 0">${esc((r.text || "").split("\n").filter(Boolean).slice(0, 2).join(" · ").slice(0, 90))}…</summary><pre style="white-space:pre-wrap;font:inherit;font-size:14px;margin:6px 0 0;background:var(--bg,#F6F4EF);padding:12px;border-radius:12px">${esc(r.text || "")}</pre></details>
+        ${r.err && r.status === "failed" ? `<div style="color:var(--bad);font-size:13px;margin-top:4px">실패 이유: ${esc(r.err)}</div>` : ""}</div>`;
+    }).join("");
+    $$("[data-resend2]", box).forEach((b) => (b.onclick = async () => {
+      const el = b.closest(".msg"); if (!confirm(`${$("b", el).textContent} 학부모님께 다시 보낼까요?`)) return;
+      b.disabled = true;
+      try { const r = await api("/api/msgs/resend", { id: el.dataset.id }); toast(r.sent ? "다시 보냈어요" : "보내지 못했어요"); loadSent(); } catch (e) { toast(e.message); b.disabled = false; }
+    }));
+  } catch (e) { box.innerHTML = `<p class="empty">${esc(e.message)}</p>`; }
+}
+const dLabelC = (d) => { const x = new Date(d + "T00:00:00"); return `${x.getMonth() + 1}월 ${x.getDate()}일 (${DOW[x.getDay()]})`; };
+
+/* ---------------- 미제출 ---------------- */
+async function renderMissing() {
+  const m = $("#main");
+  m.innerHTML = dateBar() + `<div id="hs"><p class="empty">불러오는 중…</p></div><h3 style="margin:24px 0 10px;font-size:17px">기간별 누적</h3><div id="acc"></div>`;
+  bindDate();
+  try {
+    const d = await api(`/api/hwstatus?date=${S.date}`);
+    const missN = d.classes.reduce((n, c) => n + c.rows.filter((r) => r.hwprev === "none" || (S.settings.missingPart && r.hwprev === "part")).length, 0);
+    const chip = (v) => (v === "done" ? '<span class="tag go">완료</span>' : v === "part" ? '<span class="tag warn">미흡</span>' : v === "none" ? '<span class="tag bad">미제출</span>' : '<span class="tag">체크 안 함</span>');
+    const sentChip = (st) => (st === "sent" ? '<span class="tag go">알림 보냄</span>' : st === "failed" ? '<span class="tag bad">알림 실패</span>' : st === "draft" ? '<span class="tag">알림 대기</span>' : "");
+    $("#hs").innerHTML = d.classes.length ? `
+      <div class="bar"><span style="font-size:14px;color:var(--ink2)">이날 숙제 ${S.settings.missingPart ? "미제출·미흡" : "미제출"} <b>${missN}명</b></span><span class="sp"></span>
+        <button class="btn dark" id="mkmiss" ${missN ? "" : "disabled"}>학부모 미제출 알림 만들기</button></div>
+      ${d.classes.map((c) => `<div class="sec"><h3>${esc(c.name)} <span class="tag">${c.kind === "group" ? "그룹" : "개별"}</span></h3>
+        <table><thead><tr><th>학생</th><th>지난 숙제</th><th>결과</th><th>누적</th><th></th></tr></thead><tbody>${c.rows.map((r) => `<tr><td><b>${esc(r.name)}</b>${r.hasPhone ? "" : ' <span class="tag warn">번호 없음</span>'}</td><td style="font-size:13px;color:var(--ink2)">${esc(r.hwText || "-")}</td><td>${r.att === "out" ? '<span class="tag">결석</span>' : chip(r.hwprev)}</td><td>${S.settings.warnOn ? `<span class="tag ${r.miss >= S.settings.warnCount ? "bad" : r.miss ? "warn" : ""}">${r.miss}/${S.settings.warnCount}</span>` : "-"}</td><td>${sentChip(d.sent[r.sid])}${r.hasPhone && d.sent[r.sid] !== "sent" ? `${r.hwprev === "none" || (S.settings.missingPart && r.hwprev === "part") ? ` <button type="button" class="btn sm" data-now="missing" data-sid="${r.sid}" data-nm="${esc(r.name)}">미제출 알림 바로 보내기</button>` : ""}${S.settings.warnOn && r.miss >= S.settings.warnCount ? ` <button type="button" class="btn sm dark" data-now="warn" data-sid="${r.sid}" data-nm="${esc(r.name)}">누적 ${S.settings.warnCount}회 알림 보내기</button>` : ""}` : ""}</td></tr>`).join("")}</tbody></table></div>`).join("")}`
+      : `<p class="empty">${dlabel(S.date)}에 저장된 수업 기록이 없어요. "오늘 수업"에서 숙제를 체크하면 여기에 보여요.</p>`;
+    $$("[data-now]").forEach((b) => (b.onclick = async () => {
+      const kind = b.dataset.now, nm = b.dataset.nm;
+      if (!confirm(`${nm} 학부모님께 ${kind === "warn" ? "숙제 누적 알림" : "숙제 미제출 알림"}을 지금 바로 보낼까요?`)) return;
+      b.disabled = true;
+      try { const r = await api("/api/msgs/sendnow", { date: S.date, kind, sid: b.dataset.sid }); toast(r.sent ? "보냈어요" : r.failed ? "보내지 못했어요. '학부모 메시지' 탭에서 오류를 확인해 주세요" : "보내지 않았어요"); renderMissing(); } catch (e) { toast(e.message); b.disabled = false; }
+    }));
+    const mk = $("#mkmiss");
+    if (mk) mk.onclick = async () => { try { const r = await api("/api/msgs/compose", { date: S.date, kind: "missing" }); toast(`${r.made}건 만들었어요. 확인하고 보내 주세요.`); S.kind = "missing"; S.tab = "msgs"; shell(); } catch (e) { toast(e.message); } };
+  } catch (e) { $("#hs").innerHTML = `<p class="empty">${esc(e.message)}</p>`; }
+  renderAccum();
+}
+async function renderAccum() {
+  S.mrange = S.mrange || "week";
+  const ranges = { week: "이번 주", month: "이번 달", d30: "최근 30일" };
+  $("#acc").innerHTML = `<div class="bar"><div class="seg" id="rg">${Object.entries(ranges).map(([k, v]) => `<button data-r="${k}" class="${S.mrange === k ? "on" : ""}">${v}</button>`).join("")}</div></div><div id="ms"><p class="empty">불러오는 중…</p></div>`;
+  $$("#rg button").forEach((b) => (b.onclick = () => { S.mrange = b.dataset.r; renderAccum(); }));
+  const t = S.today, dw = (new Date(t + "T00:00:00Z").getUTCDay() + 6) % 7;
+  const from = S.mrange === "week" ? addDays(t, -dw) : S.mrange === "month" ? t.slice(0, 8) + "01" : addDays(t, -29);
+  try {
+    const d = await api(`/api/missing?from=${from}&to=${t}`);
+    $("#ms").innerHTML = d.rows.length ? `<div class="sec"><p class="sub" style="margin-bottom:8px">${dlabel(from)} ~ ${dlabel(t)} · 미제출·미흡이 있는 학생 ${d.rows.length}명</p><table><thead><tr><th>학생</th><th>반</th><th>미제출</th><th>미흡</th><th>날짜</th></tr></thead><tbody>${d.rows.map((r) => `<tr><td><b>${esc(r.name)}</b></td><td>${esc(r.cname || "")}</td><td>${r.none ? `<span class="tag bad">${r.none}회</span>` : "-"}</td><td>${r.part ? `<span class="tag warn">${r.part}회</span>` : "-"}</td><td style="font-size:13px;color:var(--ink2)">${r.dates.map((x) => `${+x.date.slice(5, 7)}/${+x.date.slice(8)}${x.v === "none" ? "✕" : "△"}`).join(" ")}</td></tr>`).join("")}</tbody></table></div>` : `<p class="empty">이 기간에 숙제 미제출·미흡 학생이 없어요. 👏</p>`;
+  } catch (e) { $("#ms").innerHTML = `<p class="empty">${esc(e.message)}</p>`; }
+}
+
+/* ---------------- 관리 ---------------- */
+async function renderManage() {
+  const m = $("#main"); m.innerHTML = `<p class="empty">불러오는 중…</p>`;
+  try { S.setup = await api("/api/setup"); } catch (e) { m.innerHTML = `<p class="empty">${esc(e.message)}</p>`; return; }
+  const D = S.setup, dir = S.me.role === "director";
+  const tName = (id) => (D.teachers.find((t) => t.id === id) || {}).name || "미배정";
+  const cName = (id) => (D.classes.find((c) => c.id === id) || {}).name || "반 없음";
+  const curName = (id) => (D.curricula.find((c) => c.id === id) || {}).name || "";
+  const myCls = dir ? D.classes : D.classes.filter((c) => c.teacher === S.me.id);
+  m.innerHTML = `
+    ${dir && (!D.settings.academy || D.settings.academy === "우리 학원") ? `<div class="sec" style="border:2px solid var(--warn,#e0a100)"><h3>학원 이름을 먼저 정해 주세요</h3><p class="sub">지금은 "우리 학원"으로 나와요. 모든 메시지 첫 줄("○○입니다.")과 화면 위쪽에 들어가요.</p>
+      <div class="bar" style="margin:0"><input id="acq" placeholder="예: 해봄영어학원" style="flex:1;min-width:180px;border:1.5px solid var(--line);border-radius:10px;padding:8px 10px"><button class="btn dark" id="acqs">저장</button></div></div>` : ""}
+    ${dir ? `<div class="sec"><h3>선생님</h3><p class="sub">선생님마다 비밀번호를 정해 주면, 로그인 화면에서 이름을 고르고 들어와요. 자기 반만 보여요.</p>
+      <table><thead><tr><th>이름</th><th>교실</th><th></th></tr></thead><tbody>${D.teachers.map((t) => `<tr><td><b>${esc(t.name)}</b></td><td>${esc(t.room || "")}</td><td style="text-align:right"><button class="btn sm" data-et="${t.id}">수정</button></td></tr>`).join("") || `<tr><td colspan="3" style="color:var(--mute)">아직 선생님이 없어요.</td></tr>`}</tbody></table>
+      <button class="btn" style="margin-top:10px" data-et="">+ 선생님 추가</button></div>` : ""}
+    <div class="sec"><h3>${dir ? "반" : "내 반"}</h3><p class="sub">그룹수업은 반 전체가 같은 진도로, 개별수업은 학생마다 따로 진도가 넘어가요.</p>
+      <table><thead><tr><th>반</th><th>과정</th><th>종류</th><th>요일·시간</th><th>선생님</th><th>진도표</th>${dir ? "<th></th>" : ""}</tr></thead><tbody>${myCls.map((c) => `<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.course || "-")}</td><td>${c.kind === "group" ? "그룹" : "개별"}</td><td>${c.days.split(",").map((d) => DOW[d]).join("")} ${esc(c.time || "")}</td><td>${esc(tName(c.teacher))}</td><td>${c.rot ? esc(c.rot.split(",").map(curName).join(" → ")) + " → 처음" : esc(curName(c.cur)) + (c.cur ? ` (${c.start}차시부터)` : "")}</td>${dir ? `<td style="text-align:right"><button class="btn sm" data-ec="${c.id}">수정</button></td>` : ""}</tr>`).join("") || `<tr><td colspan="6" style="color:var(--mute)">아직 반이 없어요.</td></tr>`}</tbody></table>
+      ${dir ? `<button class="btn" style="margin-top:10px" data-ec="">+ 반 추가</button>` : ""}</div>
+    <div class="sec"><h3>학생</h3><p class="sub">${dir ? "엑셀·PDF를 올리거나 엑셀에서 복사해 붙여 넣으면 한 번에 등록돼요. 같은 이름이 있으면 번호와 반만 바꿔요." : "내 반 학생들이에요."}</p>
+      ${dir ? `<div class="bar"><button class="btn dark" id="imp">엑셀 / PDF / 붙여넣기로 등록</button><button class="btn" data-es="">+ 한 명 추가</button><button class="btn" id="bulk" disabled>선택한 학생 한 번에 바꾸기</button><input type="search" id="sq" placeholder="이름·반 검색 (반 이름으로 찾고 모두 고르기)" style="flex:1;min-width:120px;border:1.5px solid var(--line);border-radius:10px;padding:7px 10px"></div>` : ""}
+      <table><thead><tr>${dir ? '<th style="width:28px"><input type="checkbox" id="ball" title="보이는 학생 모두 고르기"></th>' : ""}<th>이름</th><th>반</th><th>학부모 번호</th><th>개별 진도</th>${dir ? "<th></th>" : ""}</tr></thead><tbody id="stb">${D.students.map((s) => `<tr data-n="${esc(s.name)} ${esc(cName(s.cls))}">${dir ? `<td><input type="checkbox" data-pick="${s.id}"></td>` : ""}<td><b>${esc(s.name)}</b></td><td>${esc(cName(s.cls))}${s.days ? `<br><small style="color:var(--mute)">${s.days.split(",").map((d) => DOW[d]).join("")}</small>` : ""}</td><td>${s.phone ? esc(dir ? s.phone.replace(/^(\d{3})(\d+)(\d{4})$/, "$1-$2-$3") : s.phone) : '<span class="tag warn">없음</span>'}</td><td style="font-size:13px">${s.rot ? esc(s.rot.split(",").map(curName).join(" → ")) : s.cur ? `${esc(curName(s.cur))} ${s.start}차시부터` : ""}</td>${dir ? `<td style="text-align:right"><button class="btn sm" data-es="${s.id}">수정</button></td>` : ""}</tr>`).join("") || `<tr><td colspan="5" style="color:var(--mute)">아직 학생이 없어요.</td></tr>`}</tbody></table></div>
+    ${dir ? `<div class="sec"><h3>진도표</h3><p class="sub">과정(중등·초등 리딩·초등 파닉스 등)별로 나눠 관리해요. 엑셀에서 표를 복사해 붙여 넣으면 돼요.</p>
+      <div class="seg" id="mtabs" style="margin-bottom:10px;flex-wrap:wrap">${["", ...courses()].map((co) => `<button data-mco="${esc(co)}" class="${(S.mcourse || "") === co ? "on" : ""}">${esc(co || "전체")} ${co ? D.curricula.filter((x) => x.course === co).length : D.curricula.length}</button>`).join("")}</div>
+      <table><thead><tr><th>진도표</th><th>과정</th><th>차시</th><th></th></tr></thead><tbody>${D.curricula.filter((c) => !S.mcourse || c.course === S.mcourse).map((c) => `<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.course || "-")}</td><td>${c.n}개</td><td style="text-align:right"><button class="btn sm" data-eu="${c.id}">열기·수정</button></td></tr>`).join("") || `<tr><td colspan="4" style="color:var(--mute)">이 과정에 진도표가 없어요.</td></tr>`}</tbody></table>
+      <button class="btn" style="margin-top:10px" data-eu="">+ 진도표 추가</button>
+      <div class="f" style="margin-top:14px"><label for="hwps">숙제 빠른 선택 버튼 (쉼표로 구분)</label><div class="bar" style="margin:0"><input id="hwps" value="${esc((S.settings.hwPresets || []).join(", "))}" style="flex:1;min-width:160px;border:1.5px solid var(--line);border-radius:10px;padding:8px 10px"><button class="btn" id="hwpsave">버튼 저장</button></div><small>오늘 수업의 "오늘 숙제" 칸 아래에 버튼으로 나와요. 예: 워크북, 단어 암기, 리딩 녹음</small></div>
+      <div class="f" style="margin-top:14px"><label for="crs">과정 목록 (쉼표로 구분)</label><div class="bar" style="margin:0"><input id="crs" value="${esc(courses().join(", "))}" style="flex:1;min-width:160px;border:1.5px solid var(--line);border-radius:10px;padding:8px 10px"><button class="btn" id="crsave">과정 저장</button></div></div></div>
+    <div class="sec"><h3>학부모 메시지 설정</h3>
+      <div class="grid">
+        <div class="f"><label>학원 이름 (메시지 첫 줄)</label><input id="s_ac" value="${esc(D.settings.academy)}"></div>
+        <div class="f"><label>자동 발송</label><select id="s_auto"><option value="1" ${D.settings.autoSend ? "selected" : ""}>켜기</option><option value="0" ${D.settings.autoSend ? "" : "selected"}>끄기 (직접 보내기만)</option></select></div>
+        <div class="f"><label>미리보기 만드는 시간</label><input type="time" id="s_ct" value="${D.settings.composeTime}"></div>
+        <div class="f"><label>자동 발송 시간</label><input type="time" id="s_st" value="${D.settings.sendTime}"><small>미리보기 시간과 발송 시간 사이에 선생님이 확인·수정해요.</small></div>
+        <div class="f"><label>주간 리포트</label><select id="s_wk">${["끄기", ...[1, 2, 3, 4, 5, 6, 0].map((d) => DOW[d] + "요일")].map((l, i) => { const v = i === 0 ? "off" : [1, 2, 3, 4, 5, 6, 0][i - 1]; const on = i === 0 ? !D.settings.weekly : D.settings.weekly && D.settings.weeklyDay === v; return `<option value="${v}" ${on ? "selected" : ""}>${l}</option>`; }).join("")}</select></div>
+        <div class="f"><label>주간 리포트 보내는 방법</label><select id="s_wa"><option value="0" ${D.settings.weeklyAuto ? "" : "selected"}>직접 골라서 보내기</option><option value="1" ${D.settings.weeklyAuto ? "selected" : ""}>자동 발송 (일간과 같은 시간)</option></select></div>
+        <div class="f"><label>주간 리포트에 넣는 수업</label><select id="s_wk2"><option value="1" ${D.settings.weeklySkipDay === false ? "" : "selected"}>기준일(금요일) 수업 빼고 그 주에 한 수업</option><option value="0" ${D.settings.weeklySkipDay === false ? "selected" : ""}>기준일 수업까지 포함</option></select><small>금요일 수업은 일간 알림톡으로 따로 나가요.</small></div>
+        <div class="f"><label>숙제 미제출 알림 (학부모께 따로)</label><select id="s_ma"><option value="1" ${D.settings.missingAuto ? "selected" : ""}>매일 자동 (일간과 같은 시간)</option><option value="0" ${D.settings.missingAuto ? "" : "selected"}>직접 만들어 보낼 때만</option></select></div>
+        <div class="f"><label>미제출 알림 대상</label><select id="s_mp"><option value="0" ${D.settings.missingPart ? "" : "selected"}>미제출만</option><option value="1" ${D.settings.missingPart ? "selected" : ""}>미제출 + 미흡</option></select></div>
+        <div class="f"><label>숙제 누적 알림</label><select id="s_wo"><option value="1" ${D.settings.warnOn ? "selected" : ""}>보내기</option><option value="0" ${D.settings.warnOn ? "" : "selected"}>끄기</option></select></div>
+        <div class="f"><label>몇 번 쌓이면 보낼까요</label><input type="number" id="s_wc" min="2" max="30" value="${D.settings.warnCount}"><small>보낸 뒤에는 다시 0부터 세요.</small></div>
+        <div class="f"><label>누적에 세는 것</label><select id="s_wp"><option value="0" ${D.settings.warnPart ? "" : "selected"}>미제출만</option><option value="1" ${D.settings.warnPart ? "selected" : ""}>미제출 + 미흡</option></select></div>
+        <div class="f"><label>월간 리포트 보내는 방법</label><select id="s_ma2"><option value="0" ${D.settings.monthlyAuto ? "" : "selected"}>직접 골라서 보내기</option><option value="1" ${D.settings.monthlyAuto ? "selected" : ""}>자동 발송 (말일)</option></select></div>
+        <div class="f"><label>월간 리포트 (말일)</label><select id="s_mo"><option value="1" ${D.settings.monthly ? "selected" : ""}>보내기</option><option value="0" ${D.settings.monthly ? "" : "selected"}>끄기</option></select></div>
+      </div>
+      <h3 style="margin:18px 0 4px;font-size:16px">출결 즉시 알림</h3><p class="sub">선생님이 출석 버튼을 누르는 순간 학부모님께 바로 가요. 오늘 날짜만, 학생당 하루 한 번씩만 보내요.</p>
+      <div class="grid">${[["in", "등원 알림 (출석)", "notifyIn"], ["late", "지각 알림", "notifyLate"], ["out", "결석·미도착 알림", "notifyOut"]].map(([k, l, f]) => `<div class="f"><label>${l}</label><select id="s_n_${k}"><option value="1" ${D.settings[f] ? "selected" : ""}>보내기</option><option value="0" ${D.settings[f] ? "" : "selected"}>안 보내기</option></select></div>`).join("")}</div>
+      ${[["in", "등원"], ["late", "지각"], ["out", "결석·미도착"]].map(([k, l]) => `<div class="f" style="margin-top:10px"><label>${l} 문구</label><textarea id="s_a_${k}" class="paste" style="font-family:inherit;font-size:14px;min-height:70px">${esc(D.settings.atpl[k])}</textarea></div>`).join("")}
+      <p class="sub" style="margin-top:6px">넣을 수 있는 칸: {학원} {학생명} {반} {수업 시간} {현재 시각} {날짜}</p>
+      <h3 style="margin:18px 0 4px;font-size:16px">메시지 문구</h3>
+      ${Object.entries(KIND).map(([k, v]) => `<div class="f" style="margin-top:12px"><label style="display:flex;align-items:center;gap:8px">${v} 메시지 문구 <button type="button" class="btn sm" data-deft="${k}">추천 문구로 바꾸기</button></label><textarea id="s_t_${k}" class="paste" style="font-family:inherit;font-size:14px;min-height:170px">${esc(D.settings.tpl[k])}</textarea></div>`).join("")}
+      <p class="sub" style="margin-top:6px">넣을 수 있는 칸: 일간·미제출 {학원} {학생명} {반} {날짜} {출석} {오늘 할 일} {학습 내용} {숙제} {다음 수업} {지난 숙제 내용} {지난 숙제 결과} {선생님 한마디} · 사진 {사진 링크} {사진 주소} · 누적 {누적 횟수} {누적 날짜} · 주간/월간 {기간} {출석 요약} {숙제 완료율} {진도} {코멘트} · 쿠션 멘트 {인사} {출석 멘트} {숙제 멘트} {주간 멘트} {마무리}. 내용이 빈 줄은 자동으로 빠져요.</p>
+      <h3 style="margin:18px 0 4px;font-size:16px">쿠션 멘트 (상황별로 하나씩 골라 들어가요)</h3>
+      <p class="sub">한 줄에 한 문장씩 써 주세요. 학생·날짜마다 다른 문장이 골라져서 매일 똑같지 않아요. {학생명} {학원}을 넣을 수 있어요.</p>
+      <div class="grid">${PHR.map(([k, l]) => `<div class="f"><label>${l}</label><textarea id="s_p_${k}" class="paste" style="font-family:inherit;font-size:13px;min-height:96px">${esc((D.settings.phr[k] || []).join("\n"))}</textarea></div>`).join("")}</div>
+      <button class="btn dark" id="ssave">메시지 설정 저장</button></div>
+    <div class="sec"><h3>발송 방식</h3><p class="sub">문자는 문구를 자유롭게 고칠 수 있어요. 카카오 알림톡은 카카오에서 승인받은 문구 그대로 가고, 실패하면 같은 내용이 문자로 대신 가요.</p>
+      <div class="seg" id="chan" style="margin-bottom:12px"><button type="button" data-ch="sms" class="${D.settings.channel !== "ata" ? "on" : ""}">문자 (SMS·LMS)</button><button type="button" data-ch="ata" class="${D.settings.channel === "ata" ? "on" : ""}">카카오 알림톡</button></div>
+      <div id="ataBox" ${D.settings.channel === "ata" ? "" : "hidden"}>
+        <div class="f"><label for="pf">카카오 채널 ID (pfId)</label><input id="pf" value="${esc(D.settings.pfId || "")}" placeholder="KA01PF…"><small>솔라피 → 카카오 채널 관리에서 복사해요.</small></div>
+        <div class="f" style="margin-top:12px"><label>기본으로 보낼 형태</label>
+          <div class="seg" id="sty"><button type="button" data-sty="basic" class="${D.settings.style !== "cushion" ? "on" : ""}">기본형 알림톡</button><button type="button" data-sty="cushion" class="${D.settings.style === "cushion" ? "on" : ""}">쿠션멘트형 알림톡</button></div>
+          <small>둘 다 학원 카카오 채널로 가요. 학부모 메시지 탭에서 학생마다, 또는 한 번에 바꿀 수도 있어요.</small></div>
+        <p class="sub" style="margin-top:12px">메시지 종류마다 솔라피에서 승인된 <b>템플릿 ID</b>만 넣고 저장하세요. <b>승인된 문구는 솔라피에서 자동으로 가져와서</b> 그 칸 이름에 맞춰 채워 보내요. 새 템플릿을 신청할 때는 "추천 문구"로 심사 넣을 문구를 만들 수 있어요. 비워 둔 종류는 문자로 가요.</p>
+        ${ATA.filter(([k]) => !k.startsWith("att_") || D.settings[{ att_in: "notifyIn", att_late: "notifyLate", att_out: "notifyOut" }[k]]).map(([k, l]) => `<div style="margin-top:12px;border-top:1px solid var(--line);padding-top:12px"><b style="font-size:15px">${l}</b>
+          ${[["basic", "기본형", "ata"], ["cushion", "쿠션멘트형", "ata2"]].map(([st, sl, key]) => { const a = (D.settings[key] || {})[k] || {}, x = k + "." + st; return `<div class="f" style="margin-top:8px"><label style="display:flex;align-items:center;gap:8px">${sl} <button type="button" class="btn sm" data-atasug="${x}">추천 문구</button><button type="button" class="btn sm" data-ataload="${x}">솔라피에서 불러오기</button>${a.id || a.body ? `<button type="button" class="btn sm" data-atadel="${x}">지우기</button>` : ""}</label>
+          <div class="grid"><input data-ataid="${x}" value="${esc(a.id || "")}" placeholder="템플릿 ID (KA01TP…)"><div class="bar" style="margin:0"><input type="tel" data-atatest="${x}" placeholder="테스트 받을 번호" style="flex:1;min-width:110px"><button type="button" class="btn sm" data-atago="${x}">알림톡 테스트</button></div></div>
+          <textarea data-atabody="${x}" class="paste" style="font-family:inherit;font-size:13px;min-height:90px;margin-top:6px" placeholder="승인된 템플릿 내용을 그대로 붙여 넣기">${esc(a.body || "")}</textarea>
+          ${a.id && a.ok === a.id ? '<small style="color:var(--go)">✓ 솔라피에 승인된 문구와 맞췄어요</small><br>' : ""}<small data-atachk="${x}"></small></div>`; }).join("")}</div>`).join("")}
+      </div>
+      <button class="btn dark" id="chsave" style="margin-top:12px">발송 방식 저장</button></div>
+    <div class="sec"><h3>문자 연결 (솔라피)</h3>
+      ${D.sms.ready ? `<div class="info ok">연결됨 · 발신번호 ${esc(D.sms.from)} · API Key ${esc(D.sms.key)} · Secret ${D.sms.secretLen}자</div>` : `<div class="info warn">Cloudflare에 비밀값이 필요해요: ${D.sms.missing.join(", ")}</div>`}
+      <div class="bar"><input type="tel" id="tp" placeholder="내 휴대폰 번호" style="flex:1;min-width:150px;border:1.5px solid var(--line);border-radius:10px;padding:8px 10px"><button class="btn" id="tsend">테스트 문자 보내기</button></div></div>` : ""}
+    <div class="sec"><h3>기록 내려받기</h3><p class="sub">수업 기록을 엑셀(CSV)로 받아 구글시트나 엑셀에서 열 수 있어요.</p>
+      <div class="bar"><input type="date" id="ef" value="${S.today.slice(0, 8)}01"><span>~</span><input type="date" id="et" value="${S.today}"><button class="btn" id="exp">내려받기</button></div></div>
+    ${dir ? `<div class="sec"><h3>원장 비밀번호 바꾸기</h3><div class="bar"><input type="password" id="op" placeholder="지금 비밀번호" style="flex:1;min-width:120px;border:1.5px solid var(--line);border-radius:10px;padding:8px"><input type="password" id="np" placeholder="새 비밀번호 (6자 이상)" style="flex:1;min-width:120px;border:1.5px solid var(--line);border-radius:10px;padding:8px"><button class="btn" id="cpw">바꾸기</button></div></div>` : ""}`;
+  bindManage();
+}
+function bindManage() {
+  const D = S.setup;
+  const re = () => renderManage();
+  $$("[data-et]").forEach((b) => (b.onclick = () => editTeacher(D.teachers.find((t) => t.id === b.dataset.et))));
+  $$("[data-ec]").forEach((b) => (b.onclick = () => editClass(D.classes.find((c) => c.id === b.dataset.ec))));
+  $$("[data-es]").forEach((b) => (b.onclick = () => editStudent(D.students.find((s) => s.id === b.dataset.es))));
+  const picked = () => $$("[data-pick]:checked").map((x) => x.dataset.pick);
+  const bulkBtn = $("#bulk"), syncBulk = () => { if (bulkBtn) { const n = picked().length; bulkBtn.disabled = !n; bulkBtn.textContent = n ? `선택한 ${n}명 한 번에 바꾸기` : "선택한 학생 한 번에 바꾸기"; } };
+  $$("[data-pick]").forEach((x) => (x.onchange = syncBulk));
+  const ball = $("#ball");
+  if (ball) ball.onchange = () => { $$("#stb tr").forEach((tr) => { const x = $("[data-pick]", tr); if (x && !tr.hidden) x.checked = ball.checked; }); syncBulk(); };
+  if (bulkBtn) bulkBtn.onclick = () => bulkStudents(picked());
+  $$("[data-eu]").forEach((b) => (b.onclick = () => editCur(b.dataset.eu)));
+  $$("[data-mco]").forEach((b) => (b.onclick = () => { S.mcourse = b.dataset.mco; renderManage(); }));
+  const acq = $("#acqs");
+  if (acq) acq.onclick = async () => {
+    const v = $("#acq").value.trim(); if (!v) return toast("학원 이름을 입력해 주세요");
+    try { const r = await api("/api/settings", { ...D.settings, academy: v }); S.settings = r.settings; toast("학원 이름을 저장했어요"); S.tab = "manage"; shell(); } catch (e) { toast(e.message); }
+  };
+  const hps = $("#hwpsave");
+  if (hps) hps.onclick = async () => {
+    try { const r = await api("/api/settings", { ...D.settings, hwPresets: $("#hwps").value.split(",").map((x) => x.trim()).filter(Boolean) }); S.settings = r.settings; toast("숙제 버튼을 저장했어요"); renderManage(); } catch (e) { toast(e.message); }
+  };
+  const crs = $("#crsave");
+  if (crs) crs.onclick = async () => {
+    try { const r = await api("/api/settings", { ...D.settings, courses: $("#crs").value.split(",").map((x) => x.trim()).filter(Boolean) }); S.settings = r.settings; toast("과정 목록을 저장했어요"); renderManage(); } catch (e) { toast(e.message); }
+  };
+  const sq = $("#sq"); if (sq) sq.oninput = () => $$("#stb tr").forEach((tr) => (tr.hidden = !!sq.value && !(tr.dataset.n || "").includes(sq.value.trim())));
+  const imp = $("#imp"); if (imp) imp.onclick = importStudents;
+  const ss = $("#ssave");
+  if (ss) ss.onclick = async () => {
+    const wk = $("#s_wk").value;
+    const ataLike = Object.entries(KIND).filter(([k]) => /#\{[^{}]+\}/.test($("#s_t_" + k).value)).map(([, v]) => v);
+    if (ataLike.length && !confirm(`${ataLike.join(", ")} 메시지 문구에 #{…} 칸이 있어요.\n#{…}는 알림톡 템플릿 형식이라 여기서는 채워지지 않아요.\n알림톡 템플릿은 아래 "발송 방식" 칸에 넣어 주세요.\n\n그래도 이대로 저장할까요?`)) return;
+    try {
+      const r = await api("/api/settings", { academy: $("#s_ac").value, autoSend: $("#s_auto").value === "1", composeTime: $("#s_ct").value, sendTime: $("#s_st").value, weekly: wk !== "off", weeklyDay: wk === "off" ? D.settings.weeklyDay : +wk, weeklyAuto: $("#s_wa").value === "1", monthlyAuto: $("#s_ma2").value === "1", weeklySkipDay: $("#s_wk2").value === "1", monthly: $("#s_mo").value === "1", notifyIn: $("#s_n_in").value === "1", notifyLate: $("#s_n_late").value === "1", notifyOut: $("#s_n_out").value === "1", phr: Object.fromEntries(PHR.map(([k]) => [k, $("#s_p_" + k).value.split("\n").map((x) => x.trim()).filter(Boolean)])), atpl: { in: $("#s_a_in").value, late: $("#s_a_late").value, out: $("#s_a_out").value }, missingAuto: $("#s_ma").value === "1", warnOn: $("#s_wo").value === "1", warnCount: +$("#s_wc").value, warnPart: $("#s_wp").value === "1", missingPart: $("#s_mp").value === "1", tpl: Object.fromEntries(Object.keys(KIND).map((k) => [k, $("#s_t_" + k).value])) });
+      S.settings = r.settings; toast("저장했어요");
+    } catch (e) { toast(e.message); }
+  };
+  $$("[data-deft]").forEach((b) => (b.onclick = () => { const k = b.dataset.deft; if (confirm("이 문구를 추천 문구(쿠션 멘트 포함)로 바꿀까요? 저장을 눌러야 적용돼요.")) $("#s_t_" + k).value = D.defaults.tpl[k]; }));
+  $$("#chan button").forEach((b) => (b.onclick = () => { $$("#chan button").forEach((x) => x.classList.toggle("on", x === b)); $("#ataBox").hidden = b.dataset.ch !== "ata"; }));
+  $$("[data-atabody]").forEach((t) => { const f = () => ($(`[data-atachk="${t.dataset.atabody}"]`).innerHTML = ataCheck(t.value)); t.oninput = f; f(); });
+  // kinds not on screen (attendance alerts turned off) keep what was saved
+  const readAta = (st) => Object.fromEntries(ATA.map(([k]) => { const i = $(`[data-ataid="${k}.${st}"]`); return [k, i ? { id: i.value.trim(), body: $(`[data-atabody="${k}.${st}"]`).value } : (D.settings[st === "cushion" ? "ata2" : "ata"] || {})[k] || {}]; }));
+  $$("[data-ataload]").forEach((b) => (b.onclick = async () => {
+    const x = b.dataset.ataload, id = $(`[data-ataid="${x}"]`).value.trim(), t = $(`[data-atabody="${x}"]`);
+    if (!id) return toast("템플릿 ID(KA01TP…)를 먼저 넣어 주세요");
+    b.disabled = true;
+    try { const r = await api("/api/ata/template", { id }); t.value = r.content; t.oninput(); toast(`승인된 문구를 불러왔어요${r.status ? " (" + r.status + ")" : ""}. "발송 방식 저장"을 눌러 주세요`); } catch (e) { toast(e.message); }
+    b.disabled = false;
+  }));
+  $$("[data-atadel]").forEach((b) => (b.onclick = async () => {
+    const x = b.dataset.atadel; if (!confirm("이 알림톡 템플릿을 앱에서 지울까요?\n(솔라피에 등록된 템플릿은 그대로 있어요. 이 종류는 문자나 다른 형태로 가요.)")) return;
+    $(`[data-ataid="${x}"]`).value = ""; $(`[data-atabody="${x}"]`).value = "";
+    try { const r = await api("/api/settings", { ...S.settings, channel: $("#chan .on").dataset.ch, pfId: $("#pf").value, ata: readAta("basic"), ata2: readAta("cushion"), style: $("#sty .on").dataset.sty }); S.settings = r.settings; D.settings = r.settings; toast("지웠어요"); renderManage(); } catch (e) { toast(e.message); }
+  }));
+  $$("#sty button").forEach((b) => (b.onclick = () => $$("#sty button").forEach((x) => x.classList.toggle("on", x === b))));
+  $$("[data-atasug]").forEach((b) => (b.onclick = () => { const x = b.dataset.atasug, [k, st] = x.split("."), t = $(`[data-atabody="${x}"]`); if (t.value.trim() && !confirm("지금 내용을 추천 문구로 바꿀까요?")) return; t.value = ataSuggest(k, st); t.oninput(); }));
+  const chs = $("#chsave");
+  if (chs) chs.onclick = async () => {
+    try { const r = await api("/api/settings", { ...S.settings, channel: $("#chan .on").dataset.ch, pfId: $("#pf").value, ata: readAta("basic"), ata2: readAta("cushion"), style: $("#sty .on").dataset.sty }); S.settings = r.settings; D.settings = r.settings; toast(r.notes && r.notes.length ? "저장했어요. 확인이 필요한 템플릿: " + r.notes.join(" / ") : "저장했어요. 승인된 템플릿 문구를 솔라피에서 가져와 맞췄어요"); renderManage(); } catch (e) { toast(e.message); }
+  };
+  $$("[data-atago]").forEach((b) => (b.onclick = async () => {
+    const x = b.dataset.atago, [k, st] = x.split(".");
+    try { const r = await api("/api/test", { phone: $(`[data-atatest="${x}"]`).value, ataKind: k, ataStyle: st }); toast(r.ok ? (r.notes && r.notes.length ? "보냈어요. 다만 승인 문구 가져오기는 실패: " + r.notes.join(" / ") : "알림톡 테스트를 보냈어요") : "실패: " + r.msg);
+      const box = $(`[data-atachk="${x}"]`); if (box && r.vars) box.innerHTML = ataCheck($(`[data-atabody="${x}"]`).value) + `<br><span style="color:var(--mute)">보낸 값: ${Object.entries(r.vars).map(([k, v]) => `${esc(k)} = ${esc(v)}`).join(" · ")}</span>`; } catch (e) { toast(e.message); }
+  }));
+  const ts = $("#tsend"); if (ts) ts.onclick = async () => { try { const r = await api("/api/test", { phone: $("#tp").value }); toast(r.ok ? "테스트 문자를 보냈어요" : "실패: " + r.msg); } catch (e) { toast(e.message); } };
+  const cp = $("#cpw"); if (cp) cp.onclick = async () => { try { const r = await api("/api/director/password", { old: $("#op").value, password: $("#np").value }); token = r.token; try { localStorage.setItem(TK, token); } catch {} toast("비밀번호를 바꿨어요"); re(); } catch (e) { toast(e.message); } };
+  $("#exp").onclick = async () => {
+    try {
+      const d = await api(`/api/export?from=${$("#ef").value}&to=${$("#et").value}`);
+      const head = ["날짜", "반", "학생", "출석", "지난 숙제", "오늘 할 일", "오늘 숙제", "다음 수업", "선생님 한마디", "입력"];
+      const cell = (v) => { let s = String(v == null ? "" : v); if (/^[=+\-@]/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; };
+      const lines = [head, ...d.rows.map((r) => [r.date, r.cname, r.name, r.att, r.hwprev, r.today, r.hw, r.next, r.note, r.by])].map((r) => r.map(cell).join(","));
+      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" }));
+      a.download = `수업기록_${d.from}_${d.to}.csv`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    } catch (e) { toast(e.message); }
+  };
+}
+const field = (id, label, val = "", attrs = "") => `<div class="f"><label for="${id}">${label}</label><input id="${id}" value="${esc(val)}" ${attrs}></div>`;
+const sel = (id, label, opts, val) => `<div class="f"><label for="${id}">${label}</label><select id="${id}">${opts.map(([v, l]) => `<option value="${esc(v)}" ${String(v) === String(val ?? "") ? "selected" : ""}>${esc(l)}</option>`).join("")}</select></div>`;
+const foot = (del) => `<div class="bar" style="margin-top:16px">${del ? `<button class="btn red" id="mdel">삭제</button>` : ""}<span class="sp"></span><button class="btn" onclick="closeModal()">닫기</button><button class="btn dark" id="msave">저장</button></div><p class="err" id="merr"></p>`;
+async function act(fn) { try { $("#merr").textContent = ""; await fn(); closeModal(); renderManage(); toast("저장했어요"); } catch (e) { $("#merr").textContent = e.message; } }
+function editTeacher(t) {
+  modal(`<h3>${t ? "선생님 수정" : "선생님 추가"}</h3><div class="grid">${field("t_n", "이름", t && t.name)}${field("t_r", "교실", t && t.room, 'placeholder="예: 1관"')}</div>
+    <div class="f" style="margin-top:10px"><label>비밀번호${t ? " (바꿀 때만 입력)" : ""}</label><input id="t_p" type="password" autocomplete="new-password" placeholder="4자 이상"><small>선생님께 직접 알려 주세요. 바꾸면 그 선생님은 다시 로그인해야 해요.</small></div>${foot(!!t)}`);
+  $("#msave").onclick = () => act(() => api("/api/teacher", { id: t && t.id, name: $("#t_n").value, room: $("#t_r").value, password: $("#t_p").value }));
+  if (t) $("#mdel").onclick = () => confirm(`${t.name} 선생님을 삭제할까요? 맡은 반은 '미배정'이 돼요.`) && act(() => api("/api/teacher/delete", { id: t.id }));
+}
+// up to 6 진도표 in the order they take turns (1 only = no rotation)
+function rotEditor(id, vals, label) {
+  return `<div class="f" style="margin-top:12px"><label>${label}</label><div id="${id}" data-vals="${esc(vals.join(","))}" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px"></div>
+    <small>1번째만 고르면 그 진도표로 계속 가요. 2개 이상 고르면 수업마다 1번째 → 2번째 → … → 다시 1번째 순서로 돌아가요. 진도표마다 진도는 따로 기억해요.</small></div>`;
+}
+function fillRot(id, course) {
+  const box = $("#" + id), cur = box.querySelectorAll("select").length ? readRot(id) : (box.dataset.vals || "").split(",").filter(Boolean);
+  box.innerHTML = Array.from({ length: 6 }, (_, i) => `<select data-ri="${i}" style="border:1.5px solid var(--line);border-radius:9px;padding:7px 8px;background:#fff;min-width:0">${curOptions(S.setup.curricula, cur[i], i === 0 ? "1번째 · 없음" : `${i + 1}번째 · 비워 두기`, course)}</select>`).join("");
+}
+const readRot = (id) => $$(`#${id} select`).map((x) => x.value).filter(Boolean);
+function editClass(c) {
+  const D = S.setup, days = c ? c.days.split(",") : ["1", "2", "3", "4", "5"];
+  modal(`<h3>${c ? "반 수정" : "반 추가"}</h3><div class="grid">${field("c_n", "반 이름", c && c.name)}${sel("c_k", "수업 종류", [["group", "그룹수업 (반 전체 같은 진도)"], ["private", "개별수업 (학생마다 진도)"]], c ? c.kind : "group")}
+    ${field("c_t", "시간", c && c.time, 'placeholder="예: 16:00"')}${sel("c_te", "담당 선생님", [["", "미배정"], ...D.teachers.map((t) => [t.id, t.name + (t.room ? " · " + t.room : "")])], c && c.teacher)}
+    ${sel("c_co", "과정", [["", "과정 없음"], ...courses().map((x) => [x, x])], c ? c.course : S.course || "")}${field("c_s", "시작 차시 (첫 수업 기준)", c ? c.start : 1, 'type="number" min="1"')}</div>
+    <div class="f" style="margin-top:10px"><label>수업 요일</label><div class="days">${[1, 2, 3, 4, 5, 6, 0].map((d) => `<label><input type="checkbox" value="${d}" ${days.includes(String(d)) ? "checked" : ""}><span>${DOW[d]}</span></label>`).join("")}</div>
+    <small>개별수업 반은 학생마다 진도표·시작 차시를 학생 수정에서 따로 정할 수 있어요. 정하지 않으면 반 진도표를 써요.</small></div>
+    ${rotEditor("c_rot", c ? (c.rot ? c.rot.split(",") : c.cur ? [c.cur] : []) : [], "반 진도표 · 수업 순서")}${foot(!!c)}`);
+  const fillCur = () => fillRot("c_rot", $("#c_co").value || null);
+  $("#c_co").onchange = fillCur; fillCur();
+  $("#msave").onclick = () => act(() => api("/api/class", { id: c && c.id, course: $("#c_co").value, name: $("#c_n").value, kind: $("#c_k").value, time: $("#c_t").value, teacher: $("#c_te").value, rot: readRot("c_rot"), start: +$("#c_s").value, days: $$(".days input:checked").map((x) => +x.value) }));
+  if (c) $("#mdel").onclick = () => confirm(`${c.name} 반을 삭제할까요? 학생들은 '반 없음'이 돼요.`) && act(() => api("/api/class/delete", { id: c.id }));
+}
+function bulkStudents(ids) {
+  const D = S.setup, names = ids.map((id) => (D.students.find((s) => s.id === id) || {}).name).filter(Boolean);
+  modal(`<h3>${ids.length}명 한 번에 바꾸기</h3><p class="sub" style="margin-bottom:10px">${esc(names.slice(0, 12).join(", "))}${names.length > 12 ? ` 외 ${names.length - 12}명` : ""}</p>
+    <p class="sub">체크한 항목만 바뀌어요.</p>
+    <div class="f" style="margin-top:10px"><label><input type="checkbox" id="b_on_c"> 반 바꾸기</label>${sel("b_c", "", [["", "반 없음"], ...D.classes.map((c) => [c.id, c.name])], "")}</div>
+    <div class="f" style="margin-top:10px"><label><input type="checkbox" id="b_on_r"> 진도표 · 수업 순서 바꾸기</label>
+      ${sel("b_co", "과정 (진도표 고르기용)", [["", "전체"], ...courses().map((x) => [x, x])], "")}
+      ${rotEditor("b_rot", [], "수업 순서 (모두 비우면 반 설정을 따라가요)")}
+      ${field("b_st", "시작 차시 (비우면 그대로)", "", 'type="number" min="1" placeholder="그대로"')}</div>
+    <div class="f" style="margin-top:10px"><label><input type="checkbox" id="b_on_d"> 오는 요일 바꾸기</label><div class="days" id="b_days">${[1, 2, 3, 4, 5, 6, 0].map((d) => `<label><input type="checkbox" value="${d}"><span>${DOW[d]}</span></label>`).join("")}</div><small>모두 비우면 반 요일을 따라가요.</small></div>
+    <div class="bar" style="margin-top:14px"><span class="sp"></span><button class="btn" onclick="closeModal()">취소</button><button class="btn dark" id="bsave">${ids.length}명 바꾸기</button></div>`);
+  const fill = () => fillRot("b_rot", $("#b_co").value || null);
+  $("#b_co").onchange = fill; fill();
+  // touching a section ticks its checkbox
+  [["b_c", "b_on_c"], ["b_rot", "b_on_r"], ["b_co", "b_on_r"], ["b_st", "b_on_r"], ["b_days", "b_on_d"]].forEach(([a, b]) => $("#" + a).addEventListener("change", () => ($("#" + b).checked = true)));
+  $("#bsave").onclick = async () => {
+    const p = { ids };
+    if ($("#b_on_c").checked) p.cls = $("#b_c").value;
+    if ($("#b_on_r").checked) { p.rot = readRot("b_rot"); if ($("#b_st").value) p.start = +$("#b_st").value; }
+    if ($("#b_on_d").checked) p.days = $$("#b_days input:checked").map((x) => +x.value);
+    if (Object.keys(p).length < 2) return toast("바꿀 항목에 체크해 주세요");
+    try { const r = await api("/api/students/bulk", p); closeModal(); toast(`${r.n}명을 바꿨어요`); renderManage(); } catch (e) { toast(e.message); }
+  };
+}
+function editStudent(s) {
+  const D = S.setup;
+  modal(`<h3>${s ? "학생 수정" : "학생 추가"}</h3><div class="grid">${field("s_n", "이름", s && s.name)}${field("s_p", "학부모 휴대폰", s && s.phone, 'type="tel" inputmode="numeric" placeholder="01012345678"')}
+    ${sel("s_c", "반", [["", "반 없음"], ...D.classes.map((c) => [c.id, c.name])], s && s.cls)}${sel("s_co", "과정 (진도표 고르기용)", [["", "전체"], ...courses().map((x) => [x, x])], s && s.cur ? (D.curricula.find((x) => x.id === s.cur) || {}).course || "" : "")}
+    ${field("s_st", "개별 시작 차시", s ? s.start : 1, 'type="number" min="1"')}</div>
+    <div class="f" style="margin-top:10px"><label>오는 요일</label><div class="days" id="s_days">${[1, 2, 3, 4, 5, 6, 0].map((d) => `<label><input type="checkbox" value="${d}" ${s && s.days && s.days.split(",").includes(String(d)) ? "checked" : ""}><span>${DOW[d]}</span></label>`).join("")}</div>
+    <small>비워 두면 반 요일과 같아요. 고르면 그 요일에만 오늘 수업 화면에 나와요.</small></div>${rotEditor("s_rot", s ? (s.rot ? s.rot.split(",") : s.cur ? [s.cur] : []) : [], "개별 진도표 · 수업 순서 (개별수업만, 비우면 반 설정)")}${foot(!!s)}`);
+  const fillS = () => fillRot("s_rot", $("#s_co").value || null);
+  $("#s_co").onchange = fillS; fillS();
+  $("#msave").onclick = () => act(() => api("/api/student", { id: s && s.id, name: $("#s_n").value, phone: $("#s_p").value, cls: $("#s_c").value, rot: readRot("s_rot"), start: +$("#s_st").value, days: $$("#s_days input:checked").map((x) => +x.value) }));
+  if (s) $("#mdel").onclick = () => confirm(`${s.name} 학생을 명단에서 뺄까요? 지난 기록은 남아요.`) && act(() => api("/api/student/delete", { id: s.id }));
+}
+
+/* ----- table parsing: paste / Excel / PDF ----- */
+const loadScript = (src) => new Promise((ok, no) => { if ([...document.scripts].some((s) => s.src === src)) return ok(); const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = () => no(new Error("파일 읽기 도구를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.")); document.head.appendChild(s); });
+async function fileRows(file) {
+  const name = file.name.toLowerCase();
+  if (name.endsWith(".pdf")) {
+    await loadScript("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js");
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise, rows = [];
+    for (let p = 1; p <= pdf.numPages; p++) {
+      const items = (await (await pdf.getPage(p)).getTextContent()).items.filter((i) => i.str.trim());
+      const lines = [];
+      for (const it of items) { const y = it.transform[5]; let l = lines.find((x) => Math.abs(x.y - y) < 3); if (!l) lines.push((l = { y, cells: [] })); l.cells.push({ x: it.transform[4], s: it.str.trim() }); }
+      lines.sort((a, b) => b.y - a.y).forEach((l) => rows.push(l.cells.sort((a, b) => a.x - b.x).map((c) => c.s)));
+    }
+    return rows;
+  }
+  if (/\.(csv|txt|tsv)$/.test(name)) return textRows(await file.text());
+  await loadScript("https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js");
+  const wb = XLSX.read(await file.arrayBuffer(), { type: "array" });
+  return XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, raw: false, defval: "" });
+}
+function textRows(t) {
+  t = String(t || "").replace(/\r\n?/g, "\n");
+  const sep = t.includes("\t") ? "\t" : ",", rows = [];
+  let row = [], cell = "", q = false;
+  for (let i = 0; i < t.length; i++) {
+    const ch = t[i];
+    if (q) { if (ch === '"') { if (t[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += ch; continue; }
+    if (ch === '"' && cell === "") q = true;
+    else if (ch === sep) { row.push(cell.trim()); cell = ""; }
+    else if (ch === "\n") { row.push(cell.trim()); rows.push(row); row = []; cell = ""; }
+    else cell += ch;
+  }
+  row.push(cell.trim()); rows.push(row);
+  return rows.filter((r) => r.some((c) => c));
+}
+const PHONE = /01[016789][\s.\-]?\d{3,4}[\s.\-]?\d{4}/;
+const isDayCell = (c) => /^([월화수목금토일](요일)?[\s,\/·.]*)+$/.test(c);
+const HEAD = /^(이름|학생|학생명|성명|원생|원생명|학년|반|반이름|클래스|번호|연락처|휴대폰|학부모|학부모번호|비고|요일|수업요일)$/;
+function studentsFromRows(rows) {
+  const cls = S.setup.classes.map((c) => c.name.replace(/\s+/g, ""));
+  const out = [], seen = new Set();
+  let H = null; // header row tells which column is 반 / 요일 when the class doesn't exist yet
+  for (const r of rows) {
+    const raw = r.map((c) => String(c || "").trim());
+    const cells = raw.filter(Boolean);
+    if (!cells.length) continue;
+    if (cells.filter((c) => HEAD.test(c.replace(/\s/g, ""))).length >= 2) { H = cells.map((c) => c.replace(/\s/g, "")); continue; }
+    const joined = cells.join(" ");
+    const pm = joined.replace(/(\d)\s+(?=\d)/g, "$1").match(PHONE);
+    const ci = H ? H.findIndex((h) => /^(반|반이름|클래스)$/.test(h)) : -1;
+    let cl = cells.find((c) => cls.includes(c.replace(/\s+/g, ""))) || (ci >= 0 && cells.length === H.length ? cells[ci] : "");
+    const dayCells = cells.filter(isDayCell);
+    const name = cells.find((c) => /^[가-힣]{2,5}$/.test(c) && !isDayCell(c) && c !== cl && !HEAD.test(c));
+    if (!name) continue;
+    if (!cl && ci >= 0) { const rest = cells.filter((c) => c !== name && !isDayCell(c) && !PHONE.test(c.replace(/(\d)\s+(?=\d)/g, "$1")) && !/^\d+$/.test(c)); if (rest.length === 1) cl = rest[0]; }
+    const phone = pm ? pm[0].replace(/\D/g, "") : "";
+    const k = name + phone; if (seen.has(k)) continue; seen.add(k);
+    out.push({ name, phone, cls: cl, days: dayCells.join("") });
+  }
+  return out;
+}
+function importStudents() {
+  modal(`<h3>학생 한 번에 등록</h3><p class="sub" style="color:var(--mute);font-size:13px;margin:0 0 10px">엑셀·PDF 파일을 고르거나, 엑셀에서 "이름 / 반 / 요일 / 학부모 번호" 칸을 복사해 붙여 넣어 주세요. 반 이름이 같으면 그 반으로, 없는 반이면 새로 만들어져요. 요일(예: 월수금)을 쓰면 그 요일에만 오늘 수업에 나와요.</p>
+    <div class="bar"><input type="file" id="if" accept=".xlsx,.xls,.csv,.pdf"></div>
+    <textarea class="paste" id="ip" placeholder="이름	반	요일	학부모 번호
+김하늘	Phonics A	월수금	010-1234-5678"></textarea>
+    <div id="iprev" style="margin-top:10px;font-size:14px"></div>
+    <div class="bar" style="margin-top:12px"><span class="sp"></span><button class="btn" onclick="closeModal()">닫기</button><button class="btn dark" id="igo" disabled>등록하기</button></div><p class="err" id="merr"></p>`);
+  let list = [];
+  const show = () => {
+    $("#iprev").innerHTML = list.length ? `<b>${list.length}명</b>을 읽었어요. 번호 있음 ${list.filter((x) => x.phone).length}명 · 반 배정 ${list.filter((x) => x.cls).length}명<div style="max-height:180px;overflow:auto;margin-top:6px;color:var(--ink2)">${list.slice(0, 200).map((x) => `${esc(x.name)} · ${esc(x.cls || "반 없음")}${S.setup.classes.some((c) => c.name.replace(/\s+/g, "") === String(x.cls).replace(/\s+/g, "")) || !x.cls ? "" : " <span class=\"tag\">새 반</span>"} · ${x.days ? esc(x.days) : "반 요일"} · ${x.phone ? esc(x.phone) : "번호 없음"}`).join("<br>")}</div>` : "";
+    $("#igo").disabled = !list.length;
+  };
+  $("#ip").oninput = () => { list = studentsFromRows(textRows($("#ip").value)); show(); };
+  $("#if").onchange = async (e) => { const f = e.target.files[0]; if (!f) return; try { $("#iprev").textContent = "읽는 중…"; list = studentsFromRows(await fileRows(f)); show(); if (!list.length) $("#iprev").textContent = "학생 이름을 찾지 못했어요. 붙여넣기로 해 주세요."; } catch (err) { $("#iprev").textContent = err.message; } };
+  $("#igo").onclick = async () => { try { const r = await api("/api/students/import", { students: list }); closeModal(); toast(`새로 ${r.added}명, 수정 ${r.updated}명${r.madeCls ? `, 새 반 ${r.madeCls}개` : ""}`); renderManage(); } catch (e) { $("#merr").textContent = e.message; } };
+}
+async function editCur(id) {
+  let cur = null, lessons = [];
+  if (id) { const d = await api("/api/curriculum/get?id=" + id); cur = d.cur; lessons = d.lessons; }
+  const tsv = lessons.map((l) => [l.seq, l.title, l.content, l.hw].join("\t")).join("\n");
+  modal(`<h3>${cur ? "진도표 수정" : "진도표 추가"}</h3><div class="grid">${field("u_n", "진도표 이름", cur && cur.name, 'placeholder="예: Reading Starter 1"')}${sel("u_co", "과정", [["", "모든 과정 공통"], ...courses().map((x) => [x, x])], cur ? cur.course : S.mcourse || "")}</div>
+    <label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:14px;font-weight:600"><input type="checkbox" id="u_loop" ${!cur || cur.loop ? "checked" : ""} style="width:18px;height:18px;accent-color:var(--ink)"> 마지막 차시가 끝나면 1차시부터 다시 (순환)</label>
+    <div class="f" style="margin-top:10px"><label>차시 목록 (엑셀에서 복사해 붙여넣기)</label><textarea class="paste" id="u_t" placeholder="순서	차시 이름	수업 내용	숙제
+1	Unit 1 Lesson 1	알파벳 A~E, 파닉스 a	워크북 p.4~5, 리딩 녹음
+2	Unit 1 Lesson 2	알파벳 F~J	워크북 p.6~7">${esc(tsv)}</textarea>
+    <small>한 줄에 한 차시 · 칸 순서: 순서, 차시 이름, 수업 내용, 숙제. 첫 줄이 제목줄이면 자동으로 건너뛰어요. 엑셀 파일도 고를 수 있어요.</small></div>
+    <div class="bar" style="margin-top:8px"><input type="file" id="u_f" accept=".xlsx,.xls,.csv"></div><div id="u_p" style="font-size:13px;color:var(--ink2)"></div>${foot(!!cur)}`);
+  // header row (순서/차시/내용/숙제…) decides the columns; without one: 순서, 차시 이름, 수업 내용, 숙제
+  const parse = (rows0) => {
+    const rows = rows0.map((r) => r.map((x) => String(x || "").replace(/\s*\n\s*/g, " / ").trim())).filter((r) => r.some(Boolean));
+    if (!rows.length) return [];
+    const H = rows[0], find = (re) => H.findIndex((h) => re.test(h.replace(/\s/g, "")));
+    let col = null;
+    if (H.some((h) => /순서|번호|회차|차시|주차|단원|제목|내용|진도|숙제|과제|no\.?$/i.test(h.replace(/\s/g, ""))) && !H.some((h) => /^\d+$/.test(h))) {
+      col = { seq: find(/^(순서|번호|회차|no\.?)$/i), title: (() => { const i = find(/(차시이름|제목|단원|unit|lesson)/i); return i >= 0 ? i : find(/(차시|주차)/); })(), content: find(/(내용|진도|활동)/), hw: find(/(숙제|과제|homework)/i) };
+      if (col.title === col.seq) col.title = -1;
+      rows.shift();
+    }
+    let auto = 0;
+    return rows.map((c) => {
+      let seq, title, content, hw;
+      if (col) { seq = parseInt(c[col.seq]); title = col.title >= 0 ? c[col.title] : ""; content = col.content >= 0 ? c[col.content] : ""; hw = col.hw >= 0 ? c[col.hw] : ""; }
+      else if (/^\d+$/.test(c[0])) { seq = +c[0]; title = c[1] || ""; content = c[2] || ""; hw = c[3] || ""; }
+      else { title = c[0]; content = c[1] || ""; hw = c[2] || ""; }
+      if (!(seq > 0)) seq = auto + 1;
+      auto = Math.max(auto, seq);
+      return { seq, title: title || "", content: content || "", hw: hw || "" };
+    }).filter((l) => l.title || l.content || l.hw);
+  };
+  const prev = () => {
+    const l = parse(textRows($("#u_t").value));
+    const dup = l.map((x) => x.seq).filter((v, i, a) => a.indexOf(v) !== i);
+    $("#u_p").innerHTML = l.length ? `<b>${l.length}개 차시</b>를 읽었어요${dup.length ? ` <span style="color:var(--bad)">· ${[...new Set(dup)].join(", ")}번이 겹쳐요</span>` : ""}<div style="max-height:170px;overflow:auto;margin-top:6px;border:1px solid var(--line);border-radius:8px;padding:6px 8px">${l.map((x) => `<div>${x.seq}. <b>${esc(x.title)}</b> ${x.content ? "· " + esc(x.content) : ""} ${x.hw ? `<span style="color:var(--go)">· 숙제 ${esc(x.hw)}</span>` : ""}</div>`).join("")}</div>` : "";
+  };
+  $("#u_t").oninput = prev; prev();
+  $("#u_f").onchange = async (e) => { const f = e.target.files[0]; if (!f) return; try { const rows = await fileRows(f); $("#u_t").value = rows.map((r) => r.join("\t")).join("\n"); prev(); } catch (err) { $("#u_p").textContent = err.message; } };
+  $("#msave").onclick = () => act(() => api("/api/curriculum", { id: cur && cur.id, name: $("#u_n").value, course: $("#u_co").value, loop: $("#u_loop").checked, lessons: parse(textRows($("#u_t").value)) }));
+  if (cur) $("#mdel").onclick = () => confirm(`${cur.name} 진도표를 삭제할까요? 이 진도표를 쓰던 반은 '없음'이 돼요.`) && act(() => api("/api/curriculum/delete", { id: cur.id }));
+}
+
+boot();
+</script>
+</body>
+</html>

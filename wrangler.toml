@@ -1,0 +1,27 @@
+name = "class-manager"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+
+[assets]
+directory = "public"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "class-manager-db"
+
+[triggers]
+crons = ["*/10 * * * *"]
+
+[observability]
+enabled = true
+
+# 학생별 사진·영상 (30일 뒤 자동 삭제). 배포할 때 자동으로 만들어져요.
+[[kv_namespaces]]
+binding = "MEDIA"
+
+# 긴 영상(5분·1GB까지) 저장소. 배포할 때 자동으로 만들어져요. (R2는 카드 등록으로 먼저 켜 두어야 해요)
+[[r2_buckets]]
+binding = "VIDEO"
+bucket_name = "class-manager-video"
