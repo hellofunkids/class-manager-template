@@ -9,7 +9,6 @@
     "wrangler": "4.156.1"
   },
   "cloudflare": {
-    "label": "수업 관리 앱",
     "bindings": {
       "SOLAPI_KEY": {
         "description": "솔라피 콘솔 → 개발 → API Key에서 만든 API Key"
